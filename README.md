@@ -1,13 +1,12 @@
-Discussion Points  
-Functional Requirements as understood by us:
+Functional Requirements:-
 1)	Application shall calculate GPS location of the user. 
 2)	Application shall fetch on runtime latest json with list of available freifunkt wifi nodes. 
-3)	Application shall efficiently calculate list of relevant wifi nodes. ( Range shall be user configurable or static? ) 
+3)	Application shall efficiently calculate list of relevant wifi nodes. ( Range shall be user configurable or static - as per the app developer  ) 
 4)	Application shall have a “Start augmented wifi finder” button on click of which user’s back camera is started.
 5)	Application intelligently senses the direction of camera and displays the available wifi nodes.
-6)	On click of each wifi node, details regarding to that node are displayed( on camera or off camera?) 
+6)	On click of each wifi node, details regarding to that node are displayed( on camera or off camera - as per the app developer) 
 
-Doubts:-
+Doubts and clarifications:-
 1)	There is only longitude and latitude information in the Json. How to calculate altitude information? 
     - nodes not having the altitude param shall be ignored.
 2)	 What is the parameter for wifi strength? 
