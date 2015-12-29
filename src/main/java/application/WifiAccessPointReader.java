@@ -4,6 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,12 +51,11 @@ public class WifiAccessPointReader {
         for (int i = 0; i < wifiJsonNodes.length(); i++) {
             try {
                 JSONObject wifiJsonNode = (JSONObject) ((JSONObject) wifiJsonNodes.getJSONObject(wifiJsonNodes.names().getString(i)));
-                jsonAndDTOConverter.serialize(wifiJsonNode);
+                wifiNodes.add(jsonAndDTOConverter.serialize(wifiJsonNode));
             } catch (JSONException jsonEx) {
                 jsonEx.printStackTrace();
             }
         }
         return wifiNodes;
     }
-
 }

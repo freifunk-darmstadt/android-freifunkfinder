@@ -28,11 +28,13 @@ public class JSONAndDTOConverter implements ConverterInt<JSONObject, WifiAccessP
     public WifiAccessPointDTO serialize(JSONObject wifiJsonNode) throws JSONException{
         WifiAccessPointDTO wifiAccessPointDTO = new WifiAccessPointDTO();
         JSONObject nodeInfoKey = (JSONObject)wifiJsonNode.get("nodeinfo");
-        JSONObject locationKey = (JSONObject)nodeInfoKey.getJSONObject("location");
-        wifiAccessPointDTO.setLatitude((double) locationKey.get("latitude"));
-        wifiAccessPointDTO.setLongitude((double) locationKey.get("longitude"));
-        wifiAccessPointDTO.setAltitude((double) locationKey.get("altitude"));
-       wifiAccessPointDTO.setNodeId((String)nodeInfoKey.get("node_id"));
+        JSONObject locationKey = nodeInfoKey.getJSONObject("location");
+        wifiAccessPointDTO.setLatitude((double) locationKey.getDouble("latitude"));
+        wifiAccessPointDTO.setLongitude((double) locationKey.getDouble("longitude"));
+        if(locationKey.has("altitude")) {
+            wifiAccessPointDTO.setAltitude(locationKey.getDouble("altitude"));
+        }
+        wifiAccessPointDTO.setNodeId((String)nodeInfoKey.get("node_id"));
         wifiAccessPointDTO.setHostName((String)nodeInfoKey.get("hostname"));
         return wifiAccessPointDTO;
     }

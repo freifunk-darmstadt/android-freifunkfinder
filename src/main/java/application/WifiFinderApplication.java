@@ -1,5 +1,7 @@
 package application;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,10 +35,12 @@ public class WifiFinderApplication {
 
     private DTOAndVOConverter dtoandVOConverter;
 
-    public WifiFinderApplication() {
+    public WifiFinderApplication(Context applicationContext) {
         dtoAndDALConverter = DTOAndDALConverter.geDtoAndDALConverter();
+        gpsManager = new GPSManager();
         dtoandVOConverter = DTOAndVOConverter.getDTOAndVOConverter();
-        databaseManager = new SqliteManager();
+        databaseManager = new SqliteManager(applicationContext);
+        wifiReader = new WifiAccessPointReader();
     }
 
     public List<WifiAccessPointVO> getRelevantWifiNodes() {
@@ -61,6 +65,9 @@ public class WifiFinderApplication {
         return relevantAccessPoints;
     }
 
+    /*
+     * persist all the wi-fi nodes into db after reading them
+     * from freifunk server */
     public void persistWifiNode() {
         gpsLocation = gpsManager.getGpsLocation();
         List<WifiAccessPointDTO> accessPointDTOs = wifiReader.getAllWifiNodes(gpsLocation);
@@ -71,6 +78,28 @@ public class WifiFinderApplication {
                 ex.printStackTrace();
             }
         }
+    }
+
+    // for db testing only
+    public List<WifiAccessPointVO> getAllWifiNodes() {
+        List<WifiAccessPointVO> relevantAccessPoints = new ArrayList<WifiAccessPointVO>();
+        List<WifiAccessPointDAL> allNodesFromDB = databaseManager.readAll();
+        List<WifiAccessPointDTO> allWifiNodes = new ArrayList<WifiAccessPointDTO>();
+        for (WifiAccessPointDAL wifiAccessPointDAL : allNodesFromDB) {
+            try {
+                allWifiNodes.add(dtoAndDALConverter.deSerialize(wifiAccessPointDAL));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        for (WifiAccessPointDTO wifiAccessPointDTO : allWifiNodes) {
+            try {
+                relevantAccessPoints.add(dtoandVOConverter.serialize(wifiAccessPointDTO));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return relevantAccessPoints;
     }
 
     public WifiAccessPointVO getAccessPointDetails(String nodeId) {

@@ -85,6 +85,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         database.close();
+        Log.d("DB RETRIEVE :", "nodes retreived successfully!");
         return wifiAccessPointDALs;
     }
 

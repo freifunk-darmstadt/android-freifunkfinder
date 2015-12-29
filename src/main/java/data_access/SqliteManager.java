@@ -1,5 +1,7 @@
 package data_access;
 
+import android.content.Context;
+
 import java.util.List;
 
 import common.WifiAccessPointDAL;
@@ -11,8 +13,8 @@ public class SqliteManager implements DatabaseManagerInt {
 
     private SQLiteHelper sqLiteHelper;
 
-    public SqliteManager(){
-        //sqLiteHelper = new SQLiteHelper();
+    public SqliteManager(Context applicationContext){
+        sqLiteHelper = new SQLiteHelper(applicationContext);
     }
 
     @Override

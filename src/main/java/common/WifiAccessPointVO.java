@@ -44,4 +44,9 @@ public class WifiAccessPointVO extends GPSLocation {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return hostName +"_" +nodeId;
+    }
 }
