@@ -43,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
         mobileLocationManager.initLocation();
 
         //Second, do WifiFinderApplication instantiation
-        //wifiFinderApplication = new WifiFinderApplication(getApplicationContext());
+        wifiFinderApplication = new WifiFinderApplication(getApplicationContext());
 
         //Third, do JSON read, need location info for this
-        //JsonReaderAsyncTask jsonReaderAsyncTask = new JsonReaderAsyncTask();
-        //jsonReaderAsyncTask.execute();
+        JsonReaderAsyncTask jsonReaderAsyncTask = new JsonReaderAsyncTask();
+        jsonReaderAsyncTask.execute();
 
         //Fourth, do WifiOverlay instatiation
         wifiOverlayView = new WifiOverlayView(getApplicationContext(), mobileLocationManager);
