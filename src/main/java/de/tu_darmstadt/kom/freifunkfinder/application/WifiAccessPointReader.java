@@ -14,6 +14,7 @@ import de.tu_darmstadt.kom.freifunkfinder.common.ApplicationConstants;
 import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 import de.tu_darmstadt.kom.freifunkfinder.common.converter.JSONAndDTOConverter;
 
+
 /**
  * Created by govind on 12/10/2015.
  */

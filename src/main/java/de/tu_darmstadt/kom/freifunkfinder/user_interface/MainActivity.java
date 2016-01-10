@@ -1,20 +1,22 @@
 package de.tu_darmstadt.kom.freifunkfinder.user_interface;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.Toast;
+
 import java.util.List;
 import de.tu_darmstadt.kom.freifunkfinder.application.WifiFinderApplication;
-import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointVO;
+import de.tu_darmstadt.kom.freifunkfinder.application.WifiFinderApplicationInt;
+import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
+import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -29,9 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
 
-    private WifiFinderApplication wifiFinderApplication;
+    private WifiFinderApplicationInt wifiFinderApplication;
 
     private Button button;
+
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         mobileLocationManager.initLocation();
 
         //Second, do WifiFinderApplication instantiation
-        wifiFinderApplication = new WifiFinderApplication(getApplicationContext());
+        wifiFinderApplication = WifiFinderApplication.getWifiFinderApplication(getApplicationContext());
 
         //Third, do JSON read, need location info for this
         JsonReaderAsyncTask jsonReaderAsyncTask = new JsonReaderAsyncTask();
@@ -70,25 +74,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // async inner class for db operation
-    private class JsonReaderAsyncTask extends AsyncTask<Void, Void, List<WifiAccessPointVO>> {
+    private class JsonReaderAsyncTask extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected List<WifiAccessPointVO> doInBackground(Void... params) {
-            wifiFinderApplication.persistWifiNode(MobileLocation.getLocation());
-            return wifiFinderApplication.getAllWifiNodes();
+        protected void onPreExecute() {
+            progressDialog = ProgressDialog.show(MainActivity.this, " Loading...", "");
         }
 
-       /* protected void onPostExecute(final List<WifiAccessPointVO> result) {
-            final ListView listView = (ListView) findViewById(R.id.listView1);
-            ArrayAdapter<WifiAccessPointVO> arrayAdapter = new ArrayAdapter<WifiAccessPointVO>(MainActivity.this, android.R.layout.simple_list_item_1, result);
-            listView.setAdapter(arrayAdapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
-                    String selectedItem = result.get(position).toString();
-                    Toast.makeText(getApplicationContext(), "Node Selected : " + selectedItem, Toast.LENGTH_LONG).show();
-                }
-            });
-        }*/
+        @Override
+        protected Void doInBackground(Void... params) {
+            wifiFinderApplication.persistWifiNode();
+            return null;
+        }
+
+        protected void onPostExecute() {
+            GlobalParams.setIsWifiNodesPersisted(true);
+            progressDialog.dismiss();
+        }
 
     }
 

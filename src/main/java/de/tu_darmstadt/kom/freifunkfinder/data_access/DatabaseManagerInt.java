@@ -2,19 +2,22 @@ package de.tu_darmstadt.kom.freifunkfinder.data_access;
 
 import java.util.List;
 
-import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDAL;
+import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
 /**
  * Created by govind on 12/17/2015.
  */
 public interface DatabaseManagerInt {
 
-    // persist the DAL object into the DB
-    void write(WifiAccessPointDAL wifiAccessPointDAL);
+    // checks if the database is empty
+    boolean isDatabaseEmpty();
 
-    // retrieve the DAL object from the DB using the id
-    WifiAccessPointDAL read(String nodeId);
+    // persist the DTO object into the DB
+    void write(WifiAccessPointDTO wifiAccessPointDTO);
 
-    // retrieve all DAL objects
-    List<WifiAccessPointDAL> readAll();
+    // retrieve the DTO object from the DB using the id
+    WifiAccessPointDTO read(String nodeId);
+
+    // retrieve all DTO objects
+    List<WifiAccessPointDTO> readAll();
 }

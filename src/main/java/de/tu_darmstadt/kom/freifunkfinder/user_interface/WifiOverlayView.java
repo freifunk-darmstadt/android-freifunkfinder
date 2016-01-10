@@ -1,18 +1,13 @@
 package de.tu_darmstadt.kom.freifunkfinder.user_interface;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.hardware.Camera;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.os.Build;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.Display;
@@ -21,7 +16,8 @@ import android.view.View;
 import android.view.WindowManager;
 import java.util.List;
 import de.tu_darmstadt.kom.freifunkfinder.application.WifiFinderApplication;
-import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointVO;
+import de.tu_darmstadt.kom.freifunkfinder.application.WifiFinderApplicationInt;
+import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
 /**
  * Created by govind on 12/10/2015.
@@ -31,6 +27,7 @@ public class WifiOverlayView extends View {
     public static final String DEBUG_TAG = "WifiOverlayView :";
     private final Context context;
     private Handler handler;
+    private WifiFinderApplicationInt wifiFinderApplication;
 
     private final static Location mountWashington = new Location("manual");
     static {
@@ -40,8 +37,6 @@ public class WifiOverlayView extends View {
     }
 
     private MobileLocationManager mobileLocationManager;
-    private WifiAccessPointVO wifiAccessPointVO;
-    private WifiFinderApplication wifiFinderApp;
     private MobileSensorManager mobileSensorManager;
 
     private Location currentLocation = null;
@@ -78,7 +73,7 @@ public class WifiOverlayView extends View {
         this.mobileLocationManager = mobileLocationManager;
         mobileSensorManager = new MobileSensorManager(context, this);
         mobileSensorManager.initSensors();
-
+        wifiFinderApplication = WifiFinderApplication.getWifiFinderApplication(context);
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         display = windowManager.getDefaultDisplay();
 
@@ -274,17 +269,8 @@ public class WifiOverlayView extends View {
         return true;
     }
 
-    public List<WifiAccessPointVO> displayRelevantWifiNodes(){
-        //List<WifiAccessPointVO> relevantWifiNodes = wifiFinderApp.getRelevantWifiNodes();
-
-        //return relevantWifiNodes;
-        return null;
+    public List<WifiAccessPointDTO> displayRelevantWifiNodes(){
+        return wifiFinderApplication.getRelevantWifiNodes();
     }
 
-    public WifiAccessPointVO getDescription(String nodeId){
-        //WifiAccessPointVO wifiAccessPointVO = null;
-
-        //return wifiAccessPointVO;
-        return null;
-    }
 }

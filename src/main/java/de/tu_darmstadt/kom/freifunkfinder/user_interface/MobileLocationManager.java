@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
+
 /**
  * Created by govind on 12/10/2015.
  */
@@ -19,6 +21,7 @@ public class MobileLocationManager implements LocationListener {
     public static final String DEBUG_TAG = "MobileLocationManager :";
     private final Context applicationContext;
     private LocationManager locationManager = null;
+    private String bestProvider;
 
     public MobileLocationManager(Context applicationContext) {
         this.applicationContext = applicationContext;
@@ -32,7 +35,7 @@ public class MobileLocationManager implements LocationListener {
         criteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
         criteria.setAltitudeRequired(true);
 
-        String bestProvider = locationManager.getBestProvider(criteria, true);
+        bestProvider = locationManager.getBestProvider(criteria, true);
         Log.v(DEBUG_TAG, "selected best provider: " + bestProvider);
 
         Location lastLocation = locationManager.getLastKnownLocation(bestProvider);
@@ -46,7 +49,7 @@ public class MobileLocationManager implements LocationListener {
                         android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
             return;
         }
-
+        GlobalParams.setBestLocationProvider(bestProvider);
         locationManager.requestLocationUpdates(bestProvider, 50, 0, this);
     }
 
