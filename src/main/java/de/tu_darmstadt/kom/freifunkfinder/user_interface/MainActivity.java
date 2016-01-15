@@ -67,19 +67,22 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                arView.addView(cameraView);
-                arView.addView(wifiOverlayView);
+                while (true) {
+                    if (GlobalParams.isWifiNodesPersisted()) {
+                        progressDialog.dismiss();
+                        arView.addView(cameraView);
+                        arView.addView(wifiOverlayView);
+                        break;
+                    } else {
+                        progressDialog = ProgressDialog.show(MainActivity.this, " Loading...", "");
+                    }
+                }
             }
         });
     }
 
     // async inner class for db operation
     private class JsonReaderAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            progressDialog = ProgressDialog.show(MainActivity.this, " Loading...", "");
-        }
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -89,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
 
         protected void onPostExecute() {
             GlobalParams.setIsWifiNodesPersisted(true);
-            progressDialog.dismiss();
         }
 
     }

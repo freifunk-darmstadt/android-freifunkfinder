@@ -9,6 +9,12 @@ public class GlobalParams {
 
     private static String bestLocationProvider = "network";
 
+    // search range in metres
+    private static int searchRange = 1000;
+
+    // no. of nodes to display
+    private static int nodesCount = 10;
+
     public static boolean isWifiNodesPersisted() {
         return isWifiNodesPersisted;
     }
@@ -23,5 +29,21 @@ public class GlobalParams {
 
     public static void setBestLocationProvider(String bestLocationProvider) {
         GlobalParams.bestLocationProvider = bestLocationProvider;
+    }
+
+    public static int getSearchRange() {
+        return searchRange;
+    }
+
+    public static void setSearchRange(int searchRange) {
+        GlobalParams.searchRange = searchRange;
+    }
+
+    public static int getNodesCount() {
+        return nodesCount;
+    }
+
+    public static void setNodesCount(int nodesCount) {
+        GlobalParams.nodesCount = nodesCount;
     }
 }

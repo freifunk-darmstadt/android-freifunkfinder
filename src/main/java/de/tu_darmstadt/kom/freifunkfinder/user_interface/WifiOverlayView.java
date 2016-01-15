@@ -1,5 +1,6 @@
 package de.tu_darmstadt.kom.freifunkfinder.user_interface;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -28,7 +29,7 @@ public class WifiOverlayView extends View {
     private final Context context;
     private Handler handler;
     private WifiFinderApplicationInt wifiFinderApplication;
-
+    
     private final static Location mountWashington = new Location("manual");
     static {
         mountWashington.setLatitude(70.90566);

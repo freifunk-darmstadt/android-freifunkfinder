@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
 import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
 
@@ -17,8 +18,6 @@ public class WifiAccessPointCalculator {
 
     private WifiAccessPointSorter wifiSorter;
 
-    private final int MAX_DISTANCE = 1000;
-
     public List<WifiAccessPointDTO> calculateRelevantWifiNodes(Location location , List<WifiAccessPointDTO> allWifiNodes){
         Log.d("GPS LOCATION", " latitude : " +location.getLatitude() + " and longitude : " +location.getLongitude());
         wifiSorter = new WifiAccessPointSorter(location);
@@ -26,7 +25,7 @@ public class WifiAccessPointCalculator {
         List<WifiAccessPointDTO> relevantWifiNodes = new ArrayList<WifiAccessPointDTO>();
         for (WifiAccessPointDTO wifiNode : allWifiNodes){
             Log.d("DISTANCE", " distance of node id : " +wifiNode.getNodeId() + " = " +wifiNode.getDistance());
-            if (wifiNode.getDistance() < MAX_DISTANCE){
+            if (wifiNode.getDistance() < GlobalParams.getSearchRange()){
                 relevantWifiNodes.add(wifiNode);
             }else{
                 break;
