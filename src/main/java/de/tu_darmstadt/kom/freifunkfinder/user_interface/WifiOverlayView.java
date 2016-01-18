@@ -1,7 +1,8 @@
 package de.tu_darmstadt.kom.freifunkfinder.user_interface;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -10,18 +11,20 @@ import android.graphics.Paint;
 import android.hardware.Camera;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
-import android.text.TextPaint;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import java.util.ArrayList;
 import java.util.List;
 import de.tu_darmstadt.kom.freifunkfinder.application.WifiFinderApplication;
-import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointVO;
+import de.tu_darmstadt.kom.freifunkfinder.application.WifiFinderApplicationInt;
+import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
+import de.tu_darmstadt.kom.freifunkfinder.common.MobileLocation;
+import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
 /**
  * Created by govind on 12/10/2015.
@@ -31,26 +34,21 @@ public class WifiOverlayView extends View {
     public static final String DEBUG_TAG = "WifiOverlayView :";
     private final Context context;
     private Handler handler;
-
-    private final static Location mountWashington = new Location("manual");
-    static {
-        mountWashington.setLatitude(70.90566);
-        mountWashington.setLongitude(8.85432);
-        mountWashington.setAltitude(200);
-    }
+    private WifiFinderApplicationInt wifiFinderApplication;
+    private Activity activity;
+    
+    List<WifiAccessPointDTO> hotSpotses = new ArrayList<WifiAccessPointDTO>();
 
     private MobileLocationManager mobileLocationManager;
-    private WifiAccessPointVO wifiAccessPointVO;
     private WifiFinderApplication wifiFinderApp;
     private MobileSensorManager mobileSensorManager;
 
     private Location currentLocation = null;
+    private Location lastLocation = null;
     private float[] currentAccelerometer = null;
     private float[] currentCompass = null;
 
     private Display display;
-    private float displayX = 0.0f;
-    private float displayY = 0.0f;
     private float canvasH = 1.0f;
     private float canvasW = 1.0f;
 
@@ -62,23 +60,24 @@ public class WifiOverlayView extends View {
     private float verticalFOV;
     private float horizontalFOV;
 
-    private TextPaint contentPaint;
-    private Paint targetPaint;
+    private Bitmap hotspotBitmap;
+    private Bitmap compassBitmap;
+
     private Paint compassPaint;
-    private Paint compassPaintLoc;
     private Paint compassPaintTxt;
     private Paint compassPaintLin;
     private Paint compassPaintHot;
 
-    public WifiOverlayView(Context context, MobileLocationManager mobileLocationManager) {
+    public WifiOverlayView(Context context, Activity activity, MobileLocationManager mobileLocationManager) {
         super(context);
 
         this.context = context;
         this.handler = new Handler();
         this.mobileLocationManager = mobileLocationManager;
+        this.activity = activity;
         mobileSensorManager = new MobileSensorManager(context, this);
         mobileSensorManager.initSensors();
-
+        wifiFinderApplication = WifiFinderApplication.getWifiFinderApplication(context);
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         display = windowManager.getDefaultDisplay();
 
@@ -89,96 +88,97 @@ public class WifiOverlayView extends View {
         horizontalFOV = params.getHorizontalViewAngle();
         camera.release();
 
-        // paint for target
-        targetPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        targetPaint.setColor(Color.GREEN);
+        //get the bitmap of hotspot image
+        hotspotBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hotspot);
+        compassBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.compass);
 
+        //paint for target
         compassPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         compassPaint.setColor(Color.GRAY);
         compassPaint.setAlpha(60);
-
-        compassPaintLoc = new Paint(Paint.ANTI_ALIAS_FLAG);
-        compassPaintLoc.setColor(Color.CYAN);
 
         compassPaintLin = new Paint(Paint.ANTI_ALIAS_FLAG);
         compassPaintLin.setColor(Color.GRAY);
         compassPaintLin.setAlpha(200);
 
         compassPaintTxt = new Paint(Paint.ANTI_ALIAS_FLAG);
-        compassPaintTxt.setColor(Color.BLUE);
+        compassPaintTxt.setColor(Color.CYAN);
         compassPaintTxt.setTextSize(25);
         compassPaintTxt.setAlpha(100);
 
         compassPaintHot = new Paint(Paint.ANTI_ALIAS_FLAG);
         compassPaintHot.setColor(Color.GREEN);
-        compassPaintHot.setAlpha(100);
-
+        compassPaintHot.setAlpha(80);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-
+        canvasW = canvas.getWidth();
+        canvasH = canvas.getHeight();
         float dx_n_180 = 2364.9634f;
-
-        float curBearingToMW = 0.0f;
 
         if (MobileLocation.getLocation() != null) {
             currentLocation = MobileLocation.getLocation();
-            curBearingToMW = currentLocation.bearingTo(mountWashington);
+            if (lastLocation == null) {
+                lastLocation = MobileLocation.getLocation();
+                loadRelevantHotSpots();
+            } else {
+                checkAndLoadHotSpots();
+            }
         }
+
+        /*if (GlobalParams.isRelevantHOtSoptsLoaded()) {
+            ProgressBar progressBar = (ProgressBar) activity.findViewById(R.id.progress_bar);
+            progressBar.setVisibility(View.INVISIBLE);
+        }*/
 
         float rotation[] = new float[9];
         float identity[] = new float[9];
         currentAccelerometer = mobileSensorManager.getAccelerometer();
         currentCompass = mobileSensorManager.getCompass();
         if (currentAccelerometer != null && currentCompass != null) {
-            boolean isRotation = SensorManager.getRotationMatrix(rotation, identity, currentAccelerometer, currentCompass);
+            boolean isRotation = SensorManager.getRotationMatrix(rotation, identity,
+                    currentAccelerometer, currentCompass);
             if (isRotation) {
                 float cameraRotation[] = new float[9];
-                // remap such that the camera is pointing straight down the Y
-                // axis
+
+                // remaping for camera pointing straight down the Y axis
                 SensorManager.remapCoordinateSystem(rotation,
                         SensorManager.AXIS_X, SensorManager.AXIS_Z,
                         cameraRotation);
 
-                // orientation vector
+                // orientation vector calculation
                 SensorManager.getOrientation(cameraRotation, orientation);
 
                 canvas.save();
                 // use roll for screen rotation
                 canvas.rotate((float) (0.0f - Math.toDegrees(orientation[2])));
 
-                Double al = calculateAngle(mountWashington);
-                // Translate, but normalize for the FOV of the camera -- basically, pixels per degree, times degrees == pixels
+                // Translate, also normalize for the FOV of the camera
                 dx = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])));
                 dy = (float) ( (canvas.getHeight()/ verticalFOV) * (Math.toDegrees(orientation[1])));
 
-                displayX += dx;
-                displayY += dy;
+                // translate the dy first so the horizon doesn't get pushed off
+                canvas.translate(0.0f, 0.0f - dy);
 
-                canvasW = canvas.getWidth();
-                canvasH = canvas.getHeight();
+                // translate the dx
+                canvas.translate(0.0f - dx, 0.0f);
 
-                //altitude
-                float dyal = (float) ( (canvas.getHeight()/ verticalFOV) * (al));
+                //now draw each hotspot
+                if (currentLocation != null) {
+                    for (WifiAccessPointDTO tempHotSpots: hotSpotses) {
+                        tempHotSpots.setCurrentBearing(currentLocation.bearingTo(tempHotSpots.getLocation()));
+                        tempHotSpots.setDx(canvas.getWidth() / 2 +
+                                ((float) ((canvas.getWidth() / horizontalFOV) * tempHotSpots.getCurrentBearing())));
+                        Double angle = calculateAngle(tempHotSpots.getLocation());
+                        tempHotSpots.setDy((canvas.getHeight() / 2) -
+                                ((float) ((canvas.getHeight() / verticalFOV) * (angle))));
+                        canvas.drawBitmap(hotspotBitmap, tempHotSpots.getDx()-25, tempHotSpots.getDy()-25, null);
+                    }
+                }
 
-                float dx1 = (float) ( (canvas.getWidth()/ horizontalFOV) * (Math.toDegrees(orientation[0])-curBearingToMW));
-                dx1 = dx1-dx;
-
-                 // wait to translate the dx so the horizon doesn't get pushed off
-                canvas.translate(0.0f, 0.0f-dy);
-
-                // make our line big enough to draw regardless of rotation and translation
-                //canvas.drawLine(0f - canvas.getHeight(), canvas.getHeight()/2, canvas.getWidth()+canvas.getHeight(), canvas.getHeight()/2, targetPaint);
-
-                // now translate the dx
-                canvas.translate(0.0f-dx, 0.0f);
-
-                // draw our point -- we've rotated and translated this to the right spot already
-                canvas.drawCircle(canvas.getWidth()/2, canvas.getHeight()/2, 20.0f, targetPaint);
-                canvas.drawCircle(canvas.getWidth()/2-dx1, canvas.getHeight()/2, 20.0f, targetPaint);
                 canvas.restore();
 
             }
@@ -200,10 +200,14 @@ public class WifiOverlayView extends View {
         canvas.drawText("E", (3 * canvas.getWidth() / 4) - 3, 120.0f, compassPaintTxt);
         canvas.drawText("S", (0.0f) - 3, 120.0f, compassPaintTxt);
         //draw hotspots
-        canvas.drawLine((curBearingToMW * canvas.getWidth()) / (2 * dx_n_180), 25.0f, (curBearingToMW * canvas.getWidth()) / (2 * dx_n_180), 75.0f, compassPaintHot);
-
-        float move = dx * canvas.getWidth() / (2 * dx_n_180);
-        canvas.drawCircle(canvas.getWidth()/2+move, 110.0f, 10.0f, compassPaintLoc);
+        for (WifiAccessPointDTO tempHotSpots: hotSpotses) {
+            int width = (int) (canvas.getWidth()/2 + (((tempHotSpots.getDx()) * canvas.getWidth()) / (2 * dx_n_180)));
+            int hight = (int) (60 + (((tempHotSpots.getDy()) * 120) / (2 * dx_n_180)));
+            canvas.drawCircle(width, hight, 10.0f, compassPaintHot);
+        }
+        //draw the compass
+        float move = (dx + canvas.getWidth()/2) * canvas.getWidth() / (2 * dx_n_180);
+        canvas.drawBitmap(compassBitmap, canvas.getWidth()/2+move-10, 90.0f, null);
 
         canvas.translate(15.0f, 15.0f);
         canvas.restore();
@@ -221,22 +225,21 @@ public class WifiOverlayView extends View {
 
     private Double calculateAngle(Location loc) {
 
+        Double oppo;
         Double near = haversineDistanceLocal(loc.getLatitude(), loc.getLongitude());
-        Double oppo = loc.getAltitude() - 200;
+        oppo = (loc.getAltitude() == 0.0) ? 0.0 : (loc.getAltitude() - MobileLocation.getLocation().getAltitude());
         Double angle = Math.toDegrees(Math.atan(oppo / near));
         return angle;
     }
 
 
-    private Double haversineDistanceLocal(Double aq, Double bq) {
+    private Double haversineDistanceLocal(Double latitude, Double longitude) {
 
         final int R = 6371;
-        Double lat1 = 49.900;
-        Double lon1 = 8.856;
-        Double lat2 = 0.0;
-        Double lon2 = 0.0;
-        lat2 = aq;
-        lon2 = bq;
+        Double lat1 = MobileLocation.getLocation().getLatitude();
+        Double lon1 = MobileLocation.getLocation().getLongitude();
+        Double lat2 = latitude;
+        Double lon2 = longitude;
 
         Double latDistance = toRad(lat2-lat1);
         Double lonDistance = toRad(lon2-lon1);
@@ -246,7 +249,7 @@ public class WifiOverlayView extends View {
         Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         Double distance = R * c * 1000;
 
-        return distance;
+        return Math.abs(distance);
     }
 
     private static Double toRad(Double value) {
@@ -257,34 +260,75 @@ public class WifiOverlayView extends View {
     //this is for showig hotspot detail
     @Override
     public boolean onTouchEvent( MotionEvent event) {
+
         super.onTouchEvent(event);
-        //Log.d("motionEvent", event.toString());
-        System.out.println(event.getX() + "==" + event.getY() + "==" + event.getRawX() + "==" + event.getRawY());
-        float tX = dx + event.getRawX() * canvasW / display.getWidth();
-        float tY = dy + event.getRawY() * canvasH / display.getHeight();
-        System.out.println(display.getWidth() + "================================" + display.getHeight());
-        System.out.println(tX + "================================" + tY);
-        if (event.getAction()==MotionEvent.ACTION_UP){
-            Log.d("motionEvent", "action_up");
-            //this.x+=(int)event.getX();
-            //this.y+=(int)event.getY();
+        Log.d(DEBUG_TAG, "touched");
+        float touchX = dx + (event.getX() * canvasW / display.getWidth());
+        float touchY = dy + ((float) (event.getY() * canvasH / display.getHeight())) * 1.1f;
+
+        int action = event.getActionMasked();
+        if (action != MotionEvent.ACTION_DOWN)
+        {
             return true;
         }
-        this.postInvalidate();
+
+        WifiAccessPointDTO selected = null;
+        for (WifiAccessPointDTO tempHotSpots: hotSpotses) {
+            if (((tempHotSpots.getDx() + 40) > touchX) && ((tempHotSpots.getDx() - 40) < touchX)
+                    && ((tempHotSpots.getDy() + 100) > touchY) && ((tempHotSpots.getDy() - 100) < touchY)) {
+                if (selected != null) {
+                    if ((Math.abs(tempHotSpots.getDx() - touchX) <= Math.abs(selected.getDx() - touchX))
+                            && (Math.abs(tempHotSpots.getDy() - touchY) <= Math.abs(selected.getDy() - touchY))) {
+                        selected = tempHotSpots;
+                    }
+                } else {
+                        selected = tempHotSpots;
+                }
+            }
+        }
+
+        if (selected != null) {
+            //should be replaced with new activity
+            Intent intent = new Intent(context, AboutActivity.class);
+            activity.startActivity(intent);
+        }
+
+        this.invalidate();
         return true;
     }
 
-    public List<WifiAccessPointVO> displayRelevantWifiNodes(){
-        //List<WifiAccessPointVO> relevantWifiNodes = wifiFinderApp.getRelevantWifiNodes();
-
-        //return relevantWifiNodes;
-        return null;
+    private void checkAndLoadHotSpots() {
+        Double distance = haversineDistanceLocal(lastLocation.getLatitude(), lastLocation.getLongitude());
+        if (distance > 2.0) {
+            lastLocation = currentLocation;
+            loadRelevantHotSpots();
+        }
     }
 
-    public WifiAccessPointVO getDescription(String nodeId){
-        //WifiAccessPointVO wifiAccessPointVO = null;
 
-        //return wifiAccessPointVO;
-        return null;
+    public void loadRelevantHotSpots() {
+        LoadAsyncTask loadAsyncTask = new LoadAsyncTask();
+        loadAsyncTask.execute();
     }
+
+    // async inner class for db read operation
+    private class LoadAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            while (true) {
+                if (GlobalParams.isWifiNodesPersisted()) {
+                    break;
+                }
+            }
+            hotSpotses = wifiFinderApplication.getRelevantWifiNodes();
+            return null;
+        }
+
+        protected void onPostExecute() {
+            //GlobalParams.setIsRelevantHOtSoptsLoaded(true);
+        }
+
+    }
+
 }

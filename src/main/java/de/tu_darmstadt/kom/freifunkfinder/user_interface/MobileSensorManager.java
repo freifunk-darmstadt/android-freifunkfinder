@@ -83,7 +83,9 @@ public class MobileSensorManager implements SensorEventListener {
                 compass = exSmooth(event.values.clone(), compass, event, 0.8f);
                 break;
         }
+
         wifiOverlayView.invalidate();
+
     }
 
     private float[] exSmooth(float[] in, float[] out, SensorEvent event, float smoothfactor) {
