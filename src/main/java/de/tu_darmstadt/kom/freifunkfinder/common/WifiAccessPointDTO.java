@@ -1,11 +1,11 @@
 package de.tu_darmstadt.kom.freifunkfinder.common;
 
-import de.tu_darmstadt.kom.freifunkfinder.user_interface.MobileLocation;
+import android.location.Location;
 
 /**
  * Created by govind on 12/10/2015.
  */
-public class WifiAccessPointDTO extends MobileLocation {
+public class WifiAccessPointDTO {
 
     private String hostName;
 
@@ -14,6 +14,22 @@ public class WifiAccessPointDTO extends MobileLocation {
     private String nodeId;
 
     private String description;
+
+    private String firstSeen;
+
+    private String lastSeen;
+
+    private boolean isOnline;
+
+    private double uptime;
+
+    private Location location;
+
+    private float currentBearing = 0.0f;
+
+    private float dx = 0.0f;
+
+    private float dy = 0.0f;
 
     public String getHostName() {
         return hostName;
@@ -45,5 +61,74 @@ public class WifiAccessPointDTO extends MobileLocation {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFirstSeen() {
+        return firstSeen;
+    }
+
+    public void setFirstSeen(String firstSeen) {
+        this.firstSeen = firstSeen;
+    }
+
+    public String getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(String lastSeen) {
+        this.lastSeen = lastSeen;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setIsOnline(boolean isOnline) {
+        this.isOnline = isOnline;
+    }
+
+    public double getUptime() {
+        return uptime;
+    }
+
+    public void setUptime(double uptime) {
+        this.uptime = uptime;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public float getCurrentBearing() {
+        return currentBearing;
+    }
+
+    public void setCurrentBearing(float currentBearing) {
+        this.currentBearing = currentBearing;
+    }
+
+    public float getDx() {
+        return dx;
+    }
+
+    public void setDx(float dx) {
+        this.dx = dx;
+    }
+
+    public float getDy() {
+        return dy;
+    }
+
+    public void setDy(float dy) {
+        this.dy = dy;
+    }
+
+    @Override
+    public String toString() {
+        return hostName +"_" +nodeId +"_" +distance;
     }
 }

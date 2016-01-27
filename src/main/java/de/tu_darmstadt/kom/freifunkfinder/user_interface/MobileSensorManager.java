@@ -83,9 +83,7 @@ public class MobileSensorManager implements SensorEventListener {
                 compass = exSmooth(event.values.clone(), compass, event, 0.8f);
                 break;
         }
-
         wifiOverlayView.invalidate();
-
     }
 
     private float[] exSmooth(float[] in, float[] out, SensorEvent event, float smoothfactor) {
@@ -103,7 +101,7 @@ public class MobileSensorManager implements SensorEventListener {
                     smoothVectorAcc[accCount][i] = in[i];
                     avg = (smoothVectorAcc[0][i] + smoothVectorAcc[1][i] + smoothVectorAcc[2][i]
                             + smoothVectorAcc[3][i] + smoothVectorAcc[4][i]) / divider;
-                    if (Math.abs(avg - in[i]) < 2.13f) {
+                    if (Math.abs(avg - in[i]) < 1.5f) {
 
                         out[i] = out[i] + 0.03f * (in[i] - out[i]);
                     /*} else if (Math.abs(avg -in[i]) < 0.4f) {
@@ -128,7 +126,7 @@ public class MobileSensorManager implements SensorEventListener {
                     smoothVectorMag[magCount][i] = in[i];
                     avg = (smoothVectorMag[0][i] + smoothVectorMag[1][i] + smoothVectorMag[2][i]
                             + smoothVectorMag[3][i] + smoothVectorMag[4][i]) / divider;
-                    if (Math.abs(avg - in[i]) < 2.13f) {
+                    if (Math.abs(avg - in[i]) < 1.5f) {
                         out[i] = out[i] + 0.03f * (in[i] - out[i]);
                    /* } else if (Math.abs(avg -in[i]) < 0.4f) {
                         out[i] = out[i]+0.08f*(in[i]-out[i]);*/

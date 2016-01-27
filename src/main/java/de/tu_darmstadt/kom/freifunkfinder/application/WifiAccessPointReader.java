@@ -14,12 +14,12 @@ import de.tu_darmstadt.kom.freifunkfinder.common.ApplicationConstants;
 import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 import de.tu_darmstadt.kom.freifunkfinder.common.converter.JSONAndDTOConverter;
 
+
 /**
  * Created by govind on 12/10/2015.
  */
 public class WifiAccessPointReader {
 
-    private WifiAccessPointDTO wifiAccessPointDTO;
     private ServerInterface<String> httpServer;
     private JSONAndDTOConverter jsonAndDTOConverter;
 
@@ -47,7 +47,10 @@ public class WifiAccessPointReader {
         for (int i = 0; i < wifiJsonNodes.length(); i++) {
             try {
                 JSONObject wifiJsonNode = (JSONObject) ((JSONObject) wifiJsonNodes.getJSONObject(wifiJsonNodes.names().getString(i)));
-                wifiNodes.add(jsonAndDTOConverter.serialize(wifiJsonNode));
+                WifiAccessPointDTO wifiNode = jsonAndDTOConverter.serialize(wifiJsonNode);
+                if (wifiNode != null) {
+                    wifiNodes.add(wifiNode);
+                }
             } catch (JSONException jsonEx) {
                 jsonEx.printStackTrace();
             }

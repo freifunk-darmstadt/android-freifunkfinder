@@ -1,25 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:fitsSystemWindows="true"
-    tools:context="de.tu_darmstadt.kom.freifunkfinder.user_interface.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@drawable/background"
+    tools:openDrawer="start">
 
-    <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
+    <include
+        layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-        <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
-            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" app:popupTheme="@style/AppTheme.PopupOverlay" />
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer">
 
-    </android.support.design.widget.AppBarLayout>
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:id="@+id/upper"
+            android:layout_marginTop="@dimen/nav_header_height"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_gravity="top">
 
-    <include layout="@layout/content_main" />
+            <TextView
+                android:id="@+id/seekTextView"
+                android:text="Distance : 1.00 Kilometers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="27dp"
+                android:layout_marginTop="26dp" />
 
-    <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end" android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="280dp"
+                android:progress="140"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_below="@id/seekTextView"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="60dp"
+                android:max="280"/>
 
-</android.support.design.widget.CoordinatorLayout>
+            <TextView
+                android:id="@+id/countTextView"
+                android:text="Count : "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/seekBar"
+                android:layout_marginLeft="27dp"
+                android:layout_marginTop="22dp" />
+
+            <EditText
+                android:id="@+id/countView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="5"
+                android:gravity="center"
+                android:inputType="number"
+                android:layout_below="@+id/countTextView"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="18dp"
+                android:layout_marginTop="4dp"/>
+
+        </RelativeLayout>
+
+    </android.support.design.widget.NavigationView>
+
+</android.support.v4.widget.DrawerLayout>

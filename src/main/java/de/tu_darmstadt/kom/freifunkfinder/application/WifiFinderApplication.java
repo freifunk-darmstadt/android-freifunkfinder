@@ -1,23 +1,23 @@
 package de.tu_darmstadt.kom.freifunkfinder.application;
 
 import android.content.Context;
-import android.location.Location;
+import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDAL;
+import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
 import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
-import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointVO;
-import de.tu_darmstadt.kom.freifunkfinder.common.converter.DTOAndDALConverter;
-import de.tu_darmstadt.kom.freifunkfinder.common.converter.DTOAndVOConverter;
 import de.tu_darmstadt.kom.freifunkfinder.data_access.DatabaseManagerInt;
 import de.tu_darmstadt.kom.freifunkfinder.data_access.SqliteManager;
+import de.tu_darmstadt.kom.freifunkfinder.common.MobileLocation;
+
 
 /**
  * Created by govind on 12/10/2015.
  */
-public class WifiFinderApplication {
+public class WifiFinderApplication implements WifiFinderApplicationInt {
+
+    private static WifiFinderApplication wifiFinderApplication;
 
     private WifiAccessPointReader wifiReader;
 
@@ -27,86 +27,54 @@ public class WifiFinderApplication {
 
     private DatabaseManagerInt databaseManager;
 
-    private DTOAndDALConverter dtoAndDALConverter;
+    private Context applicationContext;
 
-    private DTOAndVOConverter dtoandVOConverter;
-
-    public WifiFinderApplication(Context applicationContext) {
-        dtoAndDALConverter = DTOAndDALConverter.geDtoAndDALConverter();
-        dtoandVOConverter = DTOAndVOConverter.getDTOAndVOConverter();
+    private WifiFinderApplication(Context applicationContext) {
+        this.applicationContext = applicationContext;
+        wifiNodesCalculator = new WifiAccessPointCalculator();
         databaseManager = new SqliteManager(applicationContext);
         wifiReader = new WifiAccessPointReader();
     }
 
-    public List<WifiAccessPointVO> getRelevantWifiNodes() {
-        List<WifiAccessPointVO> relevantAccessPoints = new ArrayList<WifiAccessPointVO>();
-        List<WifiAccessPointDAL> allNodesFromDB = databaseManager.readAll();
-        List<WifiAccessPointDTO> allWifiNodes = new ArrayList<WifiAccessPointDTO>();
-        for (WifiAccessPointDAL wifiAccessPointDAL : allNodesFromDB) {
-            try {
-                allWifiNodes.add(dtoAndDALConverter.deSerialize(wifiAccessPointDAL));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+    public static WifiFinderApplication getWifiFinderApplication(Context applicationContext){
+        if(wifiFinderApplication == null){
+            wifiFinderApplication = new WifiFinderApplication(applicationContext);
         }
-        List<WifiAccessPointDTO> relevantWifiNodes = wifiNodesCalculator.calculateRelevantWifiNodes(allWifiNodes);
-        for (WifiAccessPointDTO wifiAccessPointDTO : relevantWifiNodes) {
-            try {
-                relevantAccessPoints.add(dtoandVOConverter.serialize(wifiAccessPointDTO));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        return relevantAccessPoints;
+        return wifiFinderApplication;
     }
 
-    /*
-     * persist all the wi-fi nodes into db after reading them
-     * from freifunk server */
-    public void persistWifiNode(Location location) {
-        List<WifiAccessPointDTO> accessPointDTOs = wifiReader.getAllWifiNodes(location);
-        for (WifiAccessPointDTO wifiAccessPointDTO : accessPointDTOs) {
-            try {
-                databaseManager.write(dtoAndDALConverter.serialize(wifiAccessPointDTO));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    // for db testing only
-    public List<WifiAccessPointVO> getAllWifiNodes() {
-        List<WifiAccessPointVO> relevantAccessPoints = new ArrayList<WifiAccessPointVO>();
-        List<WifiAccessPointDAL> allNodesFromDB = databaseManager.readAll();
-        List<WifiAccessPointDTO> allWifiNodes = new ArrayList<WifiAccessPointDTO>();
-        for (WifiAccessPointDAL wifiAccessPointDAL : allNodesFromDB) {
-            try {
-                allWifiNodes.add(dtoAndDALConverter.deSerialize(wifiAccessPointDAL));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        for (WifiAccessPointDTO wifiAccessPointDTO : allWifiNodes) {
-            try {
-                relevantAccessPoints.add(dtoandVOConverter.serialize(wifiAccessPointDTO));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        return relevantAccessPoints;
-    }
-
-    public WifiAccessPointVO getAccessPointDetails(String nodeId) {
-        WifiAccessPointVO wifiAccessPointVO = null;
-        WifiAccessPointDAL accessPointDAL = databaseManager.read(nodeId);
+    @Override
+    public List<WifiAccessPointDTO> getRelevantWifiNodes() {
+        List<WifiAccessPointDTO> relevantWifiNodes = null;
         try {
-            WifiAccessPointDTO wifiNode = dtoAndDALConverter.deSerialize(accessPointDAL);
-            wifiAccessPointVO = dtoandVOConverter.serialize(wifiNode);
-        } catch (Exception ex) {
+            List<WifiAccessPointDTO> allWifiNodes = getAllWifiNodes();
+            relevantWifiNodes = wifiNodesCalculator.calculateRelevantWifiNodes(MobileLocation.getLocation(), allWifiNodes);
+        }catch (Exception ex){
             ex.printStackTrace();
         }
-        return wifiAccessPointVO;
+        return relevantWifiNodes;
     }
 
+    @Override
+    public void persistWifiNode() {
+        if(databaseManager.isDatabaseEmpty()) {
+            List<WifiAccessPointDTO> accessPointDTOs = wifiReader.getAllWifiNodes(MobileLocation.getLocation());
+            for (WifiAccessPointDTO wifiAccessPointDTO : accessPointDTOs) {
+                try {
+                    databaseManager.write(wifiAccessPointDTO);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }else{
+            GlobalParams.setIsWifiNodesPersisted(true);
+            Log.d("DATABASE", "Database is already full.");
+        }
+    }
+
+    @Override
+    public List<WifiAccessPointDTO> getAllWifiNodes() {
+        return databaseManager.readAll();
+    }
 
 }

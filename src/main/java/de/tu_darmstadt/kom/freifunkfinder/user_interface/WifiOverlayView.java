@@ -36,7 +36,48 @@ public class WifiOverlayView extends View {
     private Handler handler;
     private WifiFinderApplicationInt wifiFinderApplication;
     private Activity activity;
-    
+
+
+    //will be removed, just for testing
+    private final static Location mountWashington = new Location("manual");
+    private final static Location mountWashington1 = new Location("manual");
+    private final static Location mountWashington2 = new Location("manual");
+    private final static Location mountWashington3 = new Location("manual");
+    private final static Location mountWashington4 = new Location("manual");
+
+    static {
+        mountWashington.setLatitude(49.876946);
+        mountWashington.setLongitude(8.65338);
+        mountWashington.setAltitude(0.0);
+    }
+
+    static {
+        mountWashington1.setLatitude(49.89944);
+        mountWashington1.setLongitude(8.85541);
+        mountWashington1.setAltitude(0.0);
+    }
+
+    static {
+        mountWashington2.setLatitude(49.89948);
+        mountWashington2.setLongitude(8.85539);
+        mountWashington2.setAltitude(300.600);
+    }
+
+    static {
+        mountWashington3.setLatitude(49.89970);
+        mountWashington3.setLongitude(8.85542);
+        mountWashington3.setAltitude(205.300);
+    }
+
+    static {
+        mountWashington4.setLatitude(49.885496);
+        mountWashington4.setLongitude(8.662097);
+        mountWashington4.setAltitude(500.600);
+    }
+    //remove till this
+
+
+
     List<WifiAccessPointDTO> hotSpotses = new ArrayList<WifiAccessPointDTO>();
 
     private MobileLocationManager mobileLocationManager;
@@ -61,6 +102,14 @@ public class WifiOverlayView extends View {
     private float horizontalFOV;
 
     private Bitmap hotspotBitmap;
+    private Bitmap hotspotSmallGreen;
+    private Bitmap hotspotBigGreen;
+    private Bitmap hotspotSmallRed;
+    private Bitmap hotspotBigRed;
+    private Bitmap tickSmall;
+    private Bitmap tickBig;
+    private Bitmap crossSmall;
+    private Bitmap crossBig;
     private Bitmap compassBitmap;
 
     private Paint compassPaint;
@@ -81,6 +130,39 @@ public class WifiOverlayView extends View {
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         display = windowManager.getDefaultDisplay();
 
+        //adding to DTO
+        WifiAccessPointDTO tempHotSpots0 = new WifiAccessPointDTO();
+        tempHotSpots0.setLocation(mountWashington);
+        tempHotSpots0.setDistance(1300);
+        tempHotSpots0.setIsOnline(true);
+        hotSpotses.add(tempHotSpots0);
+
+        WifiAccessPointDTO tempHotSpots1 = new WifiAccessPointDTO();
+        tempHotSpots1.setLocation(mountWashington1);
+        tempHotSpots1.setDistance(100);
+        tempHotSpots1.setIsOnline(false);
+        hotSpotses.add(tempHotSpots1);
+
+        WifiAccessPointDTO tempHotSpots2 = new WifiAccessPointDTO();
+        tempHotSpots2.setLocation(mountWashington2);
+        tempHotSpots2.setDistance(300);
+        tempHotSpots2.setIsOnline(true);
+        hotSpotses.add(tempHotSpots2);
+
+        WifiAccessPointDTO tempHotSpots3 = new WifiAccessPointDTO();
+        tempHotSpots3.setLocation(mountWashington3);
+        tempHotSpots3.setDistance(400);
+        tempHotSpots3.setIsOnline(true);
+        hotSpotses.add(tempHotSpots3);
+
+        WifiAccessPointDTO tempHotSpots4 = new WifiAccessPointDTO();
+        tempHotSpots4.setLocation(mountWashington4);
+        tempHotSpots4.setDistance(1100);
+        tempHotSpots4.setIsOnline(true);
+        hotSpotses.add(tempHotSpots4);
+        //till this
+
+
         // get camera parameters for FOV's
         Camera camera = Camera.open();
         Camera.Parameters params = camera.getParameters();
@@ -90,6 +172,14 @@ public class WifiOverlayView extends View {
 
         //get the bitmap of hotspot image
         hotspotBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hotspot);
+        hotspotSmallGreen = BitmapFactory.decodeResource(getResources(), R.drawable.hotspotsmallgreen);
+        hotspotBigGreen = BitmapFactory.decodeResource(getResources(), R.drawable.hotspotbigbreen);
+        hotspotSmallRed = BitmapFactory.decodeResource(getResources(), R.drawable.hotspotsmallred);
+        hotspotBigRed = BitmapFactory.decodeResource(getResources(), R.drawable.hotspotbigred);
+        tickSmall = BitmapFactory.decodeResource(getResources(), R.drawable.ticksmall);
+        tickBig = BitmapFactory.decodeResource(getResources(), R.drawable.tickbig);
+        crossSmall = BitmapFactory.decodeResource(getResources(), R.drawable.crosssmall);
+        crossBig = BitmapFactory.decodeResource(getResources(), R.drawable.crossbig);
         compassBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.compass);
 
         //paint for target
@@ -121,12 +211,12 @@ public class WifiOverlayView extends View {
 
         if (MobileLocation.getLocation() != null) {
             currentLocation = MobileLocation.getLocation();
-            if (lastLocation == null) {
+            /*if (lastLocation == null) {
                 lastLocation = MobileLocation.getLocation();
                 loadRelevantHotSpots();
             } else {
                 checkAndLoadHotSpots();
-            }
+            }*/
         }
 
         /*if (GlobalParams.isRelevantHOtSoptsLoaded()) {
@@ -175,7 +265,44 @@ public class WifiOverlayView extends View {
                         Double angle = calculateAngle(tempHotSpots.getLocation());
                         tempHotSpots.setDy((canvas.getHeight() / 2) -
                                 ((float) ((canvas.getHeight() / verticalFOV) * (angle))));
-                        canvas.drawBitmap(hotspotBitmap, tempHotSpots.getDx()-25, tempHotSpots.getDy()-25, null);
+                        if (tempHotSpots.getDistance() < GlobalParams.getSearchRange()/2) {
+                            if (tempHotSpots.isOnline()) {
+                                if (tempHotSpots.getLocation().getAltitude() != 0.0) {
+                                    canvas.drawBitmap(hotspotBigGreen, tempHotSpots.getDx()-30, tempHotSpots.getDy()-30, null);
+                                    canvas.drawBitmap(tickBig, tempHotSpots.getDx()+15, tempHotSpots.getDy()-15, null);
+                                } else {
+                                    canvas.drawBitmap(hotspotBigGreen, tempHotSpots.getDx()-30, tempHotSpots.getDy()-30, null);
+                                    canvas.drawBitmap(crossBig, tempHotSpots.getDx()+15, tempHotSpots.getDy()-15, null);
+                                }
+                            } else {
+                                if (tempHotSpots.getLocation().getAltitude() != 0.0) {
+                                    canvas.drawBitmap(hotspotBigRed, tempHotSpots.getDx()-30, tempHotSpots.getDy()-30, null);
+                                    canvas.drawBitmap(tickBig, tempHotSpots.getDx()+15, tempHotSpots.getDy()-15, null);
+                                } else {
+                                    canvas.drawBitmap(hotspotBigRed, tempHotSpots.getDx()-30, tempHotSpots.getDy()-30, null);
+                                    canvas.drawBitmap(crossBig, tempHotSpots.getDx()+15, tempHotSpots.getDy()-15, null);
+                                }
+                            }
+                        } else {
+                            if (tempHotSpots.isOnline()) {
+                                if (tempHotSpots.getLocation().getAltitude() != 0.0) {
+                                    canvas.drawBitmap(hotspotSmallGreen, tempHotSpots.getDx()-20, tempHotSpots.getDy()-20, null);
+                                    canvas.drawBitmap(tickSmall, tempHotSpots.getDx()+10, tempHotSpots.getDy()-10, null);
+                                } else {
+                                    canvas.drawBitmap(hotspotSmallGreen, tempHotSpots.getDx()-20, tempHotSpots.getDy()-20, null);
+                                    canvas.drawBitmap(crossSmall, tempHotSpots.getDx()+10, tempHotSpots.getDy()-10, null);
+                                }
+                            } else {
+                                if (tempHotSpots.getLocation().getAltitude() != 0.0) {
+                                    canvas.drawBitmap(hotspotSmallRed, tempHotSpots.getDx()-20, tempHotSpots.getDy()-20, null);
+                                    canvas.drawBitmap(tickSmall, tempHotSpots.getDx()+10, tempHotSpots.getDy()-10, null);
+                                } else {
+                                    canvas.drawBitmap(hotspotSmallRed, tempHotSpots.getDx()-20, tempHotSpots.getDy()-20, null);
+                                    canvas.drawBitmap(crossSmall, tempHotSpots.getDx()+10, tempHotSpots.getDy()-10, null);
+                                }
+                            }
+                        }
+                        //canvas.drawBitmap(hotspotBitmap, tempHotSpots.getDx()-25, tempHotSpots.getDy()-25, null);
                     }
                 }
 
@@ -274,7 +401,7 @@ public class WifiOverlayView extends View {
 
         WifiAccessPointDTO selected = null;
         for (WifiAccessPointDTO tempHotSpots: hotSpotses) {
-            if (((tempHotSpots.getDx() + 40) > touchX) && ((tempHotSpots.getDx() - 40) < touchX)
+            if (((tempHotSpots.getDx() + 60) > touchX) && ((tempHotSpots.getDx() - 60) < touchX)
                     && ((tempHotSpots.getDy() + 100) > touchY) && ((tempHotSpots.getDy() - 100) < touchY)) {
                 if (selected != null) {
                     if ((Math.abs(tempHotSpots.getDx() - touchX) <= Math.abs(selected.getDx() - touchX))
