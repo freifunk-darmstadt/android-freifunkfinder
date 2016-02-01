@@ -6,7 +6,7 @@ import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
 
 /**
- * Created by govind on 12/10/2015.
+ * Created by govind,sooraj,puneet on 12/10/2015.
  */
 public interface WifiFinderApplicationInt {
 

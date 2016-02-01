@@ -1,7 +1,7 @@
 package de.tu_darmstadt.kom.freifunkfinder.common;
 
 /**
- * Created by govind on 1/6/2016.
+ * Created by govind,sooraj,puneet on 1/6/2016.
  */
 public class GlobalParams {
 

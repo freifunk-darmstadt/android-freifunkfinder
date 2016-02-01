@@ -1,6 +1,5 @@
 package de.tu_darmstadt.kom.freifunkfinder.user_interface;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -42,7 +41,9 @@ public class MainActivity extends AppCompatActivity
 
     private Button button;
 
-    private ProgressDialog progressDialog;
+    private ProgressBar progressBar;
+
+    private TextView progressBarTxt;
 
     private boolean isOverlayView = false;
 
@@ -57,8 +58,11 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.INVISIBLE);
+        progressBarTxt = (TextView) findViewById(R.id.progress_bar_txt);
+        progressBarTxt.setVisibility(View.INVISIBLE);
+
 
         //First, do MobileLocationManageer instantiation
         mobileLocationManager = new MobileLocationManager(getApplicationContext(), MainActivity.this);
@@ -88,8 +92,10 @@ public class MainActivity extends AppCompatActivity
                 arView.addView(cameraView);
                 arView.addView(wifiOverlayView);
                 view.setVisibility(View.INVISIBLE);
-                //ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-                //progressBar.setVisibility(View.VISIBLE);
+                if (!GlobalParams.isWifiNodesPersisted()) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBarTxt.setVisibility(View.VISIBLE);
+                }
                 isOverlayView = true;
             }
         });
@@ -152,7 +158,7 @@ public class MainActivity extends AppCompatActivity
                     count = Integer.parseInt(editText.getText().toString());
                     GlobalParams.setNodesCount(count);
                 } else {
-                    GlobalParams.setNodesCount(5);
+                    GlobalParams.setNodesCount(10);
                 }
             }
 
@@ -176,6 +182,8 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(Void param) {
             Log.d("mainactivity", "nPostExecute()");
             GlobalParams.setIsWifiNodesPersisted(true);
+            progressBar.setVisibility(View.INVISIBLE);
+            progressBarTxt.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -209,6 +217,8 @@ public class MainActivity extends AppCompatActivity
         } else if (isOverlayView){
             arView.removeAllViews();
             button.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
+            progressBarTxt.setVisibility(View.INVISIBLE);
             isOverlayView = false;
         } else {
             super.onBackPressed();

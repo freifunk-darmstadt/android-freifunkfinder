@@ -16,7 +16,7 @@ import de.tu_darmstadt.kom.freifunkfinder.common.converter.JSONAndDTOConverter;
 
 
 /**
- * Created by govind on 12/10/2015.
+ * Created by govind,sooraj,puneet on 12/10/2015.
  */
 public class WifiAccessPointReader {
 

@@ -8,7 +8,7 @@ import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
 
 /**
- * Created by govind on 12/18/2015.
+ * Created by govind,sooraj,puneet on 12/18/2015.
  */
 public class CursorAndDTOConverter implements ConverterInt<Cursor, WifiAccessPointDTO> {
 

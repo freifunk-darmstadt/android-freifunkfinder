@@ -13,7 +13,7 @@ import de.tu_darmstadt.kom.freifunkfinder.common.MobileLocation;
 
 
 /**
- * Created by govind on 12/10/2015.
+ * Created by govind,sooraj,puneet on 12/10/2015.
  */
 public class WifiFinderApplication implements WifiFinderApplicationInt {
 

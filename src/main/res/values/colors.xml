@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorButton">#e7180d</color>
     <color name="colorButtonTxt">#ffffff</color>
+    <color name="colorProgressTxt">#ffffff</color>
     <color name="colorAccent">#FF4081</color>
     <color name="red">#E12727</color>
     <color name="lightRed1">#e75252</color>

@@ -8,7 +8,7 @@ import android.hardware.SensorManager;
 import android.util.Log;
 
 /**
- * Created by govind on 12/10/2015.
+ * Created by govind,sooraj,puneet on 12/10/2015.
  */
 public class MobileSensorManager implements SensorEventListener {
 

@@ -5,7 +5,7 @@ import android.location.Location;
 import java.io.Serializable;
 
 /**
- * Created by govind on 12/10/2015.
+ * Created by govind,sooraj,puneet on 12/10/2015.
  */
 public class MobileLocation implements Serializable {
 

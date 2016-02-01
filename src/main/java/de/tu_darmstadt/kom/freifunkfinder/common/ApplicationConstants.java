@@ -1,7 +1,7 @@
 package de.tu_darmstadt.kom.freifunkfinder.common;
 
 /**
- * Created by govind on 12/11/2015.
+ * Created by govind,sooraj,puneet on 12/11/2015.
  */
 /*
  a central class to define all the constants related to the app

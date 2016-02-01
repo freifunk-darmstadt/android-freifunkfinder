@@ -1,7 +1,7 @@
 package de.tu_darmstadt.kom.freifunkfinder.common.converter;
 
 /**
- * Created by govind on 12/11/2015.
+ * Created by govind,sooraj,puneet on 12/11/2015.
  */
 public interface ConverterInt<T, D> {
 

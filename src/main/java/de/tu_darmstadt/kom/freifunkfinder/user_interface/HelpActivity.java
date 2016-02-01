@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 /**
- * Created by sooraj on 10.01.16.
+ * Created by sooraj,govind,puneet on 10.01.16.
  */
 public class HelpActivity extends AppCompatActivity {
 

@@ -66,7 +66,7 @@
                 android:id="@+id/countView"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:hint="5"
+                android:hint="10"
                 android:gravity="center"
                 android:inputType="number"
                 android:layout_below="@+id/countTextView"

@@ -11,7 +11,7 @@ import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
 
 /**
- * Created by govind on 12/17/2015.
+ * Created by govind,sooraj,puneet on 12/17/2015.
  */
 public class JSONAndDTOConverter implements ConverterInt<JSONObject, WifiAccessPointDTO> {
 

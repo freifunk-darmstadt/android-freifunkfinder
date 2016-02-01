@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -15,19 +14,24 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
-import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
 import de.tu_darmstadt.kom.freifunkfinder.common.MobileLocation;
 
 /**
- * Created by govind on 12/10/2015.
+ * Created by govind,sooraj,puneet on 12/10/2015.
  */
-public class MobileLocationManager implements LocationListener {
+public class MobileLocationManager {
 
     public static final String DEBUG_TAG = "MobileLocationManager :";
     private final Context applicationContext;
     private LocationManager locationManager = null;
     private String bestProvider;
     private Activity activity;
+    private boolean gpsEnabled = false;
+    private boolean networkEnabled = false;
+    private boolean firstLocationSet = false;
+    private boolean gpsUpdating = false;
+    private boolean onceCalled = false;
+    private AlertDialog alert;
 
     public MobileLocationManager(Context applicationContext, Activity activity) {
         this.applicationContext = applicationContext;
@@ -37,25 +41,24 @@ public class MobileLocationManager implements LocationListener {
 
     public void initLocation() {
 
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
-        criteria.setAltitudeRequired(true);
-
-        if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-            buildAlertMessageNoGps();
+        //get both provider status
+        try{
+            gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }catch(Exception ex) {
+            ex.printStackTrace();
         }
-        bestProvider = locationManager.getBestProvider(criteria, true);
-        Log.v(DEBUG_TAG, "selected best provider: " + bestProvider);
 
-        /*Location lastLocation = locationManager.getLastKnownLocation(bestProvider);
-        MobileLocation.setLocation(lastLocation);
-        Log.d(DEBUG_TAG, "last location " + lastLocation);
+        try{
+            networkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        }catch(Exception ex) {
+            ex.printStackTrace();
+        }
 
-        if (bestProvider.equals("gps") && (lastLocation == null)) {
-            Log.i(DEBUG_TAG, "no gps coverage, switching to WiFi \"network\"");
-            bestProvider = "network";
-        }*/
+        //open settings in case location is not enabled
+        if(!gpsEnabled && !networkEnabled && !onceCalled) {
+            onceCalled = true;
+            buildAlertMessageNoGpsNet();
+        }
 
         if ( Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(applicationContext,
@@ -63,11 +66,57 @@ public class MobileLocationManager implements LocationListener {
             return;
         }
 
-        GlobalParams.setBestLocationProvider(bestProvider);
+        //start GPS updates
+        if(gpsEnabled) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 50, 0, locationListenerForGps);
+        }
 
-        Log.d(DEBUG_TAG, "doing requestLocationUpdates");
-        locationManager.requestLocationUpdates(bestProvider, 50, 0, this);
+        //start Network updates
+        if(networkEnabled) {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 50, 0, locationListenerForNetwork);
+        }
     }
+
+    LocationListener locationListenerForGps = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            Log.d(DEBUG_TAG,"in GPS changed location");
+            gpsUpdating = true;
+            MobileLocation.setLocation(location);
+            if (!firstLocationSet) {
+                firstLocationSet = true;
+            }
+        }
+        public void onProviderDisabled(String provider) {}
+        public void onProviderEnabled(String provider) {}
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+    };
+
+    LocationListener locationListenerForNetwork = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            if (!firstLocationSet) {
+                MobileLocation.setLocation(location);
+                firstLocationSet = true;
+            }
+
+            if (gpsUpdating) {
+                if (MobileLocation.getLocation() != null &&
+                        ((Math.abs(MobileLocation.getLocation().getTime() - location.getTime())) >= 1000)) {
+                    gpsUpdating = false;
+                }
+            }
+
+            if (!gpsUpdating) {
+                MobileLocation.setLocation(location);
+                Log.d(DEBUG_TAG,"in Network changed location");
+                if (location.getAltitude() == 0.0) {
+                    MobileLocation.getLocation().setAltitude(150);
+                }
+            }
+        }
+        public void onProviderDisabled(String provider) {}
+        public void onProviderEnabled(String provider) {}
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+    };
 
     public void locationRemove() {
         if ( Build.VERSION.SDK_INT >= 23 &&
@@ -75,45 +124,32 @@ public class MobileLocationManager implements LocationListener {
                         android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        locationManager.removeUpdates(this);
+        locationManager.removeUpdates(locationListenerForGps);
+        locationManager.removeUpdates(locationListenerForNetwork);
     }
 
-    public void onLocationChanged(Location location) {
-        MobileLocation.setLocation(location);
-        if (bestProvider.equals("network") && (location.getAltitude() == 0.0)) {
-            MobileLocation.getLocation().setAltitude(150);
-        }
-    }
-
-    private void buildAlertMessageNoGps() {
+    private void buildAlertMessageNoGpsNet() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+        builder.setMessage("Your Location seems to be off, do you want to enable it?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        dialog.dismiss();
+                        dialog.cancel();
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         applicationContext.startActivity(intent);
+                        //alert.dismiss();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.dismiss();
                         dialog.cancel();
+                        //alert.dismiss();
                     }
                 });
-        final AlertDialog alert = builder.create();
+        alert = builder.create();
         alert.show();
-    }
-
-    public void onProviderDisabled(String provider) {
-        // ...
-    }
-
-    public void onProviderEnabled(String provider) {
-        // ...
-    }
-
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        // ...
     }
 }

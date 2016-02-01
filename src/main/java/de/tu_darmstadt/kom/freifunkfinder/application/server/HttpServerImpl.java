@@ -1,18 +1,12 @@
 package de.tu_darmstadt.kom.freifunkfinder.application.server;
 
-import android.util.Log;
-
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Created by govind on 12/17/2015.
+ * Created by govind,sooraj,puneet on 12/17/2015.
  */
 public class HttpServerImpl implements ServerInterface<String> {
 

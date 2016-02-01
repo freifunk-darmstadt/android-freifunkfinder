@@ -15,7 +15,7 @@ import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 import de.tu_darmstadt.kom.freifunkfinder.common.converter.CursorAndDTOConverter;
 
 /**
- * Created by govind on 12/18/2015.
+ * Created by govind,sooraj,puneet on 12/18/2015.
  */
 public class SqliteManager extends SQLiteOpenHelper implements DatabaseManagerInt {
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
 /**
- * Created by govind on 1/8/2016.
+ * Created by govind,sooraj,puneet on 1/8/2016.
  */
 public class NodeDescriptionActivity extends AppCompatActivity {
 
