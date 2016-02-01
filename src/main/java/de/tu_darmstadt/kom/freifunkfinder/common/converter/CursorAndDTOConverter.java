@@ -38,10 +38,12 @@ public class CursorAndDTOConverter implements ConverterInt<Cursor, WifiAccessPoi
         // converting int (from db) to boolean
         boolean isOnline = (cursor.getInt(6) == 1) ? true : false;
         wifiAccessPointDTO.setIsOnline(isOnline);
+        wifiAccessPointDTO.setClients(cursor.getInt(7));
+        wifiAccessPointDTO.setLoadAverage(cursor.getDouble(8));
         Location location = new Location(GlobalParams.getBestLocationProvider());
-        location.setLatitude(cursor.getDouble(7));
-        location.setLongitude(cursor.getDouble(8));
-        location.setAltitude(cursor.getDouble(9));
+        location.setLatitude(cursor.getDouble(9));
+        location.setLongitude(cursor.getDouble(10));
+        location.setAltitude(cursor.getDouble(11));
         wifiAccessPointDTO.setLocation(location);
         return wifiAccessPointDTO;
     }

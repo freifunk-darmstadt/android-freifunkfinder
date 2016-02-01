@@ -60,8 +60,12 @@ public class JSONAndDTOConverter implements ConverterInt<JSONObject, WifiAccessP
         JSONObject flagsKey = (JSONObject) wifiJsonNode.get("flags");
         wifiAccessPointDTO.setIsOnline(flagsKey.getBoolean("online"));
         JSONObject statisticKey = (JSONObject) wifiJsonNode.get("statistics");
+        wifiAccessPointDTO.setClients((int)statisticKey.getInt("clients"));
         if (statisticKey.has("uptime")) {
             wifiAccessPointDTO.setUptime((double) statisticKey.getDouble("uptime"));
+        }
+        if(statisticKey.has("loadavg")){
+            wifiAccessPointDTO.setLoadAverage((double) statisticKey.getDouble("loadavg"));
         }
         return wifiAccessPointDTO;
     }

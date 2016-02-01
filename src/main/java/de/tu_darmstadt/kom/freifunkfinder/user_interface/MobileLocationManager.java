@@ -43,19 +43,19 @@ public class MobileLocationManager implements LocationListener {
         criteria.setAltitudeRequired(true);
 
         if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-            //buildAlertMessageNoGps();
+            buildAlertMessageNoGps();
         }
         bestProvider = locationManager.getBestProvider(criteria, true);
         Log.v(DEBUG_TAG, "selected best provider: " + bestProvider);
 
-        Location lastLocation = locationManager.getLastKnownLocation(bestProvider);
+        /*Location lastLocation = locationManager.getLastKnownLocation(bestProvider);
         MobileLocation.setLocation(lastLocation);
         Log.d(DEBUG_TAG, "last location " + lastLocation);
 
         if (bestProvider.equals("gps") && (lastLocation == null)) {
             Log.i(DEBUG_TAG, "no gps coverage, switching to WiFi \"network\"");
             bestProvider = "network";
-        }
+        }*/
 
         if ( Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(applicationContext,

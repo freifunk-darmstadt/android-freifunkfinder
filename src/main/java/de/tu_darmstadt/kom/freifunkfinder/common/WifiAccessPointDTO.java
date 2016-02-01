@@ -2,10 +2,14 @@ package de.tu_darmstadt.kom.freifunkfinder.common;
 
 import android.location.Location;
 
+import java.io.Serializable;
+
 /**
  * Created by govind on 12/10/2015.
  */
-public class WifiAccessPointDTO {
+public class WifiAccessPointDTO implements Serializable {
+
+    private static final long serialVersionUID = -7060210544600464481L;
 
     private String hostName;
 
@@ -30,6 +34,10 @@ public class WifiAccessPointDTO {
     private float dx = 0.0f;
 
     private float dy = 0.0f;
+
+    private int clients;
+
+    private double loadAverage;
 
     public String getHostName() {
         return hostName;
@@ -127,8 +135,20 @@ public class WifiAccessPointDTO {
         this.dy = dy;
     }
 
-    @Override
-    public String toString() {
-        return hostName +"_" +nodeId +"_" +distance;
+    public int getClients() {
+        return clients;
     }
+
+    public void setClients(int clients) {
+        this.clients = clients;
+    }
+
+    public double getLoadAverage() {
+        return loadAverage;
+    }
+
+    public void setLoadAverage(double loadAverage) {
+        this.loadAverage = loadAverage;
+    }
+
 }

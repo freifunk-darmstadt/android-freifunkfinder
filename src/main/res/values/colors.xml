@@ -5,4 +5,16 @@
     <color name="colorButton">#e7180d</color>
     <color name="colorButtonTxt">#ffffff</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="red">#E12727</color>
+    <color name="lightRed1">#e75252</color>
+    <color name="lightRed2">#ed7d7d</color>
+    <color name="lightRed3">#f09393</color>
+    <color name="darkRed1">#D11D1D</color>
+    <color name="darkRed2">#BB1A1A</color>
+    <color name="blue2">#1976D2</color>
+    <color name="blue3">#2196F3</color>
+    <color name="blue4">#64B5F6</color>
+    <color name="blue5">#90CAF9</color>
+    <color name="blue6">#E3F2FD</color>
+    <color name="black">#000000</color>
 </resources>

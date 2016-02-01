@@ -1,4 +1,4 @@
-package de.tu_darmstadt.kom.freifunkfinder.user_interface;
+package de.tu_darmstadt.wififinderlatest;
 
 import org.junit.Test;
 

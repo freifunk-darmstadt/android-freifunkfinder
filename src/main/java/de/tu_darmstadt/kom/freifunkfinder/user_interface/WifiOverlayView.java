@@ -129,7 +129,7 @@ public class WifiOverlayView extends View {
         wifiFinderApplication = WifiFinderApplication.getWifiFinderApplication(context);
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         display = windowManager.getDefaultDisplay();
-
+/*
         //adding to DTO
         WifiAccessPointDTO tempHotSpots0 = new WifiAccessPointDTO();
         tempHotSpots0.setLocation(mountWashington);
@@ -161,7 +161,7 @@ public class WifiOverlayView extends View {
         tempHotSpots4.setIsOnline(true);
         hotSpotses.add(tempHotSpots4);
         //till this
-
+*/
 
         // get camera parameters for FOV's
         Camera camera = Camera.open();
@@ -211,12 +211,12 @@ public class WifiOverlayView extends View {
 
         if (MobileLocation.getLocation() != null) {
             currentLocation = MobileLocation.getLocation();
-            /*if (lastLocation == null) {
+            if (lastLocation == null) {
                 lastLocation = MobileLocation.getLocation();
                 loadRelevantHotSpots();
             } else {
                 checkAndLoadHotSpots();
-            }*/
+            }
         }
 
         /*if (GlobalParams.isRelevantHOtSoptsLoaded()) {
@@ -416,7 +416,8 @@ public class WifiOverlayView extends View {
 
         if (selected != null) {
             //should be replaced with new activity
-            Intent intent = new Intent(context, AboutActivity.class);
+            Intent intent = new Intent(context, NodeDescriptionActivity.class);
+            intent.putExtra("selected_node", selected);
             activity.startActivity(intent);
         }
 

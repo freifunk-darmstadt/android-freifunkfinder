@@ -10,7 +10,7 @@ public class GlobalParams {
     private static String bestLocationProvider = "network";
 
     // search range in metres
-    private static int searchRange = 10000;
+    private static int searchRange = 1000;
 
     // no. of nodes to display
     private static int nodesCount = 5;

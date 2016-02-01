@@ -30,7 +30,8 @@ public class SqliteManager extends SQLiteOpenHelper implements DatabaseManagerIn
     private static final String DESCRIPTION = "DESCRIPTION";
     private static final String IS_ONLINE = "IS_ONLINE";
     private static final String UPTIME = "UPTIME";
-
+    private static final String CLIENTS = "CLIENTS";
+    private static final String LOAD_AVG = "LOAD_AVERAGE";
 
     private SQLiteDatabase database;
 
@@ -51,6 +52,8 @@ public class SqliteManager extends SQLiteOpenHelper implements DatabaseManagerIn
                 + LAST_SEEN + " VARCHAR, "
                 + UPTIME + " REAL, "
                 + IS_ONLINE + " INTEGER, "
+                + CLIENTS + " INTEGER, "
+                + LOAD_AVG + " REAL, "
                 + LATITUDE + " REAL, "
                 + LONGITUDE + " REAL, "
                 + ALTITUDE + " REAL);");
@@ -92,6 +95,8 @@ public class SqliteManager extends SQLiteOpenHelper implements DatabaseManagerIn
         // converting boolean to int for db
         int isOnline = (wifiAccessPointDTO.isOnline()) ? 1 : 0;
         dbRowValues.put(IS_ONLINE, isOnline);
+        dbRowValues.put(CLIENTS, wifiAccessPointDTO.getClients());
+        dbRowValues.put(LOAD_AVG, wifiAccessPointDTO.getLoadAverage());
         dbRowValues.put(LATITUDE, wifiAccessPointDTO.getLocation().getLatitude());
         dbRowValues.put(LONGITUDE, wifiAccessPointDTO.getLocation().getLongitude());
         dbRowValues.put(ALTITUDE, wifiAccessPointDTO.getLocation().getAltitude());

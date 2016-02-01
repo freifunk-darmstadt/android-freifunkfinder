@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
             if (isParamChanged){
-                //wifiOverlayView.loadRelevantHotSpots();
+                wifiOverlayView.loadRelevantHotSpots();
             }
         } else if (isOverlayView){
             arView.removeAllViews();
