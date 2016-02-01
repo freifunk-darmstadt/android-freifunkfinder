@@ -1,7 +1,7 @@
 package de.tu_darmstadt.kom.freifunkfinder.common;
 
 /**
- * Created by govind,sooraj,puneet on 12/11/2015.
+ * Created by govind on 12/11/2015.
  */
 /*
  a central class to define all the constants related to the app
@@ -25,6 +25,12 @@ public final class ApplicationConstants {
 
     /* table name*/
     public static final String TABLE_NAME = "WiFiAccessPoint";
+
+    /* shared preference name*/
+    public static final String PREFS_TIMESTAMP = "FreifunkTimestamp";
+
+    /* shared preference name*/
+    public static final String PREFERENC_KEY = "FF_Timestamp";
 
     /*
     * add your new constants here

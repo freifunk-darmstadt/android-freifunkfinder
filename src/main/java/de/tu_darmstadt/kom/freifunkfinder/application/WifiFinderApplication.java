@@ -1,10 +1,12 @@
 package de.tu_darmstadt.kom.freifunkfinder.application;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.List;
 
+import de.tu_darmstadt.kom.freifunkfinder.common.ApplicationConstants;
 import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
 import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 import de.tu_darmstadt.kom.freifunkfinder.data_access.DatabaseManagerInt;
@@ -41,6 +43,27 @@ public class WifiFinderApplication implements WifiFinderApplicationInt {
             wifiFinderApplication = new WifiFinderApplication(applicationContext);
         }
         return wifiFinderApplication;
+    }
+
+    /* check if duration threshold to make http
+     * request has been reached
+      * */
+    private boolean isDurationThresholdReached(long oldTimestamp) {
+        boolean isDurationReadched = false;
+        long currentTimestamp = System.currentTimeMillis();
+        System.out.println(currentTimestamp + " milliseconds using system");
+        long timeDiff = currentTimestamp - oldTimestamp;
+        long minutesOver = (timeDiff) / (1000 * 60);
+        System.out.println("minutes over = " + minutesOver);
+        if (minutesOver > 30){
+            isDurationReadched = true;
+            SharedPreferences settings = applicationContext.getSharedPreferences(ApplicationConstants.PREFS_TIMESTAMP, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putLong(ApplicationConstants.PREFERENC_KEY, currentTimestamp);
+            System.out.println(" setting old timestamp value = " +currentTimestamp);
+            editor.commit();
+        }
+        return isDurationReadched;
     }
 
     @Override

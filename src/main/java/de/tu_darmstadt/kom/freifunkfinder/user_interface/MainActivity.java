@@ -1,6 +1,7 @@
 package de.tu_darmstadt.kom.freifunkfinder.user_interface;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 
 import de.tu_darmstadt.kom.freifunkfinder.application.WifiFinderApplication;
 import de.tu_darmstadt.kom.freifunkfinder.application.WifiFinderApplicationInt;
+import de.tu_darmstadt.kom.freifunkfinder.common.ApplicationConstants;
 import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
 
 public class MainActivity extends AppCompatActivity
@@ -53,6 +55,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // shared pref operation
+        SharedPreferences sharedPreferences = getSharedPreferences(ApplicationConstants.PREFS_TIMESTAMP, 0);
+        long oldTimestamp = sharedPreferences.getLong(ApplicationConstants.PREFERENC_KEY, 0L);
+        System.out.println(" old timestamp received = " + oldTimestamp);
+        GlobalParams.setOldTimeStamp(oldTimestamp);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

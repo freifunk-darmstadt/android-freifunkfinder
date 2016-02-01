@@ -292,7 +292,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:background="@color/blue6"
-            android:text="Clients"
+            android:text="Clients Count"
             android:textSize="16dp" />
 
         <TextView
@@ -305,35 +305,5 @@
             android:textSize="16dp" />
 
     </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow11"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp">
-
-        <TextView
-            android:id="@+id/loadAvg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:background="@color/lightRed2"
-            android:text="Load Average"
-            android:textSize="16dp" />
-
-        <TextView
-            android:id="@+id/loadAvg_val"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:background="@color/lightRed2"
-            android:text=""
-            android:textSize="16dp" />
-
-    </TableRow>
-
 
 </TableLayout>

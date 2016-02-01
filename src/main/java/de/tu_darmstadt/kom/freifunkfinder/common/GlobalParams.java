@@ -1,7 +1,7 @@
 package de.tu_darmstadt.kom.freifunkfinder.common;
 
 /**
- * Created by govind,sooraj,puneet on 1/6/2016.
+ * Created by govind on 1/6/2016.
  */
 public class GlobalParams {
 
@@ -14,6 +14,8 @@ public class GlobalParams {
 
     // no. of nodes to display
     private static int nodesCount = 5;
+
+    private static long oldTimeStamp;
 
     public static boolean isWifiNodesPersisted() {
         return isWifiNodesPersisted;
@@ -45,5 +47,13 @@ public class GlobalParams {
 
     public static void setNodesCount(int nodesCount) {
         GlobalParams.nodesCount = nodesCount;
+    }
+
+    public static long getOldTimeStamp() {
+        return oldTimeStamp;
+    }
+
+    public static void setOldTimeStamp(long oldTimeStamp) {
+        GlobalParams.oldTimeStamp = oldTimeStamp;
     }
 }

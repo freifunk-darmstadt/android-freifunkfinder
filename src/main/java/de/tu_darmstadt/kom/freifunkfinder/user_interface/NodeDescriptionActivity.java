@@ -7,16 +7,20 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.util.concurrent.TimeUnit;
+
 import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
 /**
- * Created by govind,sooraj,puneet on 1/8/2016.
+ * Created by govind on 1/8/2016.
  */
 public class NodeDescriptionActivity extends AppCompatActivity {
 
-    TableLayout tableLayout;
-    TextView textView;
-    TableRow tableRow;
+    private TableLayout tableLayout;
+    private TextView textView;
+    private TableRow tableRow;
+    private static final String DISTANCE_UNIT = " m (ca.)" ;
+    private static final String NOT_AVAIL = "--- Not Available ---";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +40,8 @@ public class NodeDescriptionActivity extends AppCompatActivity {
                     textView.setText(selectedNode.getHostName());
                     break;
                 case 2:
-                    textView.setText(selectedNode.getDescription());
+                    String desc = selectedNode.getDescription();
+                    textView.setText((desc != null && desc.length() > 0) ? desc : NOT_AVAIL);
                     break;
                 case 3:
                     textView.setText(selectedNode.getFirstSeen());
@@ -45,27 +50,45 @@ public class NodeDescriptionActivity extends AppCompatActivity {
                     textView.setText(selectedNode.getLastSeen());
                     break;
                 case 5:
-                    textView.setText(String.valueOf(selectedNode.getUptime()));
+                    textView.setText(calUptime(selectedNode.getUptime()));
                     break;
                 case 6:
                     textView.setText(String.valueOf(selectedNode.isOnline()));
                     break;
                 case 7:
-                    textView.setText(String.valueOf(selectedNode.getDistance()));
+                    textView.setText(String.valueOf((int)selectedNode.getDistance()) + DISTANCE_UNIT);
                     break;
                 case 8:
-                    textView.setText(String.valueOf(selectedNode.getLocation().getAltitude()));
+                    textView.setText(calAltitude(selectedNode.getLocation().getAltitude()));
                     break;
                 case 9:
                     textView.setText(String.valueOf(selectedNode.getClients()));
                     break;
-                case 10:
-                    textView.setText(String.valueOf(selectedNode.getLoadAverage()));
-                    break;
                 default:
                     System.out.print("wrong index");
-
             }
         }
+    }
+
+    private String calUptime(double uptimeSecs){
+        String res = NOT_AVAIL;
+        if (uptimeSecs > 0.0) {
+            int days = (int) TimeUnit.SECONDS.toDays((long) uptimeSecs);
+            long hours = TimeUnit.SECONDS.toHours((long) uptimeSecs) - TimeUnit.SECONDS.toHours(TimeUnit.SECONDS.toDays((long) uptimeSecs));
+            if (days <= 0) {
+                res = hours + " hours";
+            } else {
+                res = days + " days ";
+            }
+        }
+        return res;
+    }
+
+    private String calAltitude(double altitude){
+        String res = NOT_AVAIL;
+        if(altitude > 0.0){
+            res = String.valueOf((int) altitude) + DISTANCE_UNIT;
+        }
+        return res;
     }
 }
