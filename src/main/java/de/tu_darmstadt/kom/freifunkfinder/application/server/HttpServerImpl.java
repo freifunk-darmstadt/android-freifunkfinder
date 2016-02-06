@@ -1,41 +1,62 @@
 package de.tu_darmstadt.kom.freifunkfinder.application.server;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-/**
- * Created by govind,sooraj,puneet on 12/17/2015.
- */
+/*
+HttpServerImpl - An implementation of ServerInterface to read data from Freifunk server.
+Copyright (C) 2016  Author: Govind Singh
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+govind.singh@stud.tu-darmstadt.de, TU Darmstadt, Germany
+*/
+
 public class HttpServerImpl implements ServerInterface<String> {
+
+    private static final String DEBUG_TAG = "HttpServerImpl : ";
 
     @Override
     public String getRequest(String url) {
         BufferedReader bufferedReader = null;
-        String response = null;
-        try{
-            URL httpUrl = new URL(url);
-            System.out.println("http url : " +url);
-            bufferedReader = new BufferedReader(new InputStreamReader(httpUrl.openStream()));
-            char []responseChars = new char[1024];
+        String httpResponse = null;
+        try {
+            Log.d(DEBUG_TAG, " Request URL : " + url);
+            URL httpRequestUrl = new URL(url);
+            bufferedReader = new BufferedReader(new InputStreamReader(httpRequestUrl.openStream()));
+            char[] responseChars = new char[1024];
             int lastByteRead = 0;
             StringBuffer stringBuffer = new StringBuffer();
-            while ((lastByteRead = bufferedReader.read(responseChars)) != -1){
+            while ((lastByteRead = bufferedReader.read(responseChars)) != -1) {
                 stringBuffer.append(responseChars, 0, lastByteRead);
             }
-            response = stringBuffer.toString();
-        }catch (Exception e){
+            httpResponse = stringBuffer.toString();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        try{
-            if(bufferedReader != null){
+        try {
+            if (bufferedReader != null) {
                 bufferedReader.close();
             }
-        }catch (IOException io){
+        } catch (IOException io) {
             io.printStackTrace();
         }
-        return response;
+        return httpResponse;
     }
 
 }

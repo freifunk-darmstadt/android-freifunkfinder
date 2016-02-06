@@ -9,10 +9,26 @@ import org.json.JSONObject;
 import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
 import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
+/*
+JSONAndDTOConverter - An implementation of ConverterInt to convert Json object read from Freifunk server to Domain object.
+Copyright (C) 2016  Author: Puneet Arora
 
-/**
- * Created by govind,sooraj,puneet on 12/17/2015.
- */
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+puneet.arora@stud.tu-darmstadt.de, TU Darmstadt, Germany
+*/
+
 public class JSONAndDTOConverter implements ConverterInt<JSONObject, WifiAccessPointDTO> {
 
     private static JSONAndDTOConverter jsonAndDTOConverter = null;
@@ -29,6 +45,16 @@ public class JSONAndDTOConverter implements ConverterInt<JSONObject, WifiAccessP
         return jsonAndDTOConverter;
     }
 
+    private Location getLocation(JSONObject locationKey) throws JSONException{
+        Location location = new Location(GlobalParams.getBestLocationProvider());
+        location.setLatitude((double) locationKey.getDouble("latitude"));
+        location.setLongitude((double) locationKey.getDouble("longitude"));
+        if (locationKey.has("altitude")) {
+            location.setAltitude(locationKey.getDouble("altitude"));
+        }
+        return location;
+    }
+
     @Override
     public WifiAccessPointDTO serialize(JSONObject wifiJsonNode) throws JSONException {
         WifiAccessPointDTO wifiAccessPointDTO = new WifiAccessPointDTO();
@@ -37,14 +63,7 @@ public class JSONAndDTOConverter implements ConverterInt<JSONObject, WifiAccessP
         JSONObject nodeInfoKey = (JSONObject) wifiJsonNode.get("nodeinfo");
         String nodeId = (String) nodeInfoKey.get("node_id");
         if (nodeInfoKey.has("location")) {
-            JSONObject locationKey = nodeInfoKey.getJSONObject("location");
-            Location location = new Location(GlobalParams.getBestLocationProvider());
-            location.setLatitude((double) locationKey.getDouble("latitude"));
-            location.setLongitude((double) locationKey.getDouble("longitude"));
-            if (locationKey.has("altitude")) {
-                location.setAltitude(locationKey.getDouble("altitude"));
-            }
-            wifiAccessPointDTO.setLocation(location);
+            wifiAccessPointDTO.setLocation(getLocation(nodeInfoKey.getJSONObject("location")));
         } else {
             Log.d("JSON_NODE", "No Location information and thus not persisting node : " +nodeId);
             return null;

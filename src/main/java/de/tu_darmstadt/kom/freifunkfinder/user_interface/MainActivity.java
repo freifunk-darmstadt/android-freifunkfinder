@@ -31,6 +31,8 @@ import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String DEBUG_TAG = "MainActivity : ";
+
     private CameraView cameraView;
 
     private WifiOverlayView wifiOverlayView;
@@ -59,8 +61,9 @@ public class MainActivity extends AppCompatActivity
         // shared pref operation
         SharedPreferences sharedPreferences = getSharedPreferences(ApplicationConstants.PREFS_TIMESTAMP, 0);
         long oldTimestamp = sharedPreferences.getLong(ApplicationConstants.PREFERENC_KEY, 0L);
-        System.out.println(" old timestamp received = " + oldTimestamp);
+        Log.d(DEBUG_TAG, "Old timestamp received = " + oldTimestamp);
         GlobalParams.setOldTimeStamp(oldTimestamp);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,27 +75,26 @@ public class MainActivity extends AppCompatActivity
         progressBarTxt.setVisibility(View.INVISIBLE);
 
 
-        //First, do MobileLocationManageer instantiation
+        //MobileLocationManageer instantiation
         mobileLocationManager = new MobileLocationManager(getApplicationContext(), MainActivity.this);
         mobileLocationManager.initLocation();
 
-        //Second, do WifiFinderApplication instantiation
+        //WifiFinderApplication instantiation
         wifiFinderApplication = WifiFinderApplication.getWifiFinderApplication(getApplicationContext());
 
-        //Third, do JSON read, need location info for this
+        //JSON read, need location info for this
         JsonReaderAsyncTask jsonReaderAsyncTask = new JsonReaderAsyncTask();
         jsonReaderAsyncTask.execute();
 
-        //Fourth, do WifiOverlay instantiation
+        //WifiOverlay instantiation
         wifiOverlayView = new WifiOverlayView(getApplicationContext(), this, mobileLocationManager);
 
-        //Sixth, do CameraView instantiation
+        //CameraView instantiation
         cameraView = new CameraView(getApplicationContext(), MainActivity.this);
 
-        //Seventh, do FrameLayout instantiation
+        //FrameLayout instantiation
         arView = (FrameLayout) findViewById(R.id.ar_view);
 
-        //Eighth, wait for button press
         button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,7 +190,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         protected void onPostExecute(Void param) {
-            Log.d("mainactivity", "nPostExecute()");
+            Log.d(DEBUG_TAG, "nPostExecute()");
+            Log.d(DEBUG_TAG, "Setting IsWifiNodePersisted flag to True");
             GlobalParams.setIsWifiNodesPersisted(true);
             progressBar.setVisibility(View.INVISIBLE);
             progressBarTxt.setVisibility(View.INVISIBLE);

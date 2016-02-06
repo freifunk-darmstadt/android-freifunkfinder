@@ -1,6 +1,7 @@
 package de.tu_darmstadt.kom.freifunkfinder.application;
 
 import android.location.Location;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +21,10 @@ import de.tu_darmstadt.kom.freifunkfinder.common.converter.JSONAndDTOConverter;
  */
 public class WifiAccessPointReader {
 
+    private static final String DEBUG_TAG = "WifiNodeReader : ";
+
     private ServerInterface<String> httpServer;
+
     private JSONAndDTOConverter jsonAndDTOConverter;
 
     public WifiAccessPointReader() {
@@ -32,9 +36,12 @@ public class WifiAccessPointReader {
         JSONObject jsonNodes = null;
         String response = httpServer.getRequest(ApplicationConstants.FREIFUNK_URL);
         try {
-            JSONObject jsonResponse = new JSONObject(response);
-            jsonNodes = (JSONObject) jsonResponse.get("nodes");
-
+            if (response != null) {
+                JSONObject jsonResponse = new JSONObject(response);
+                jsonNodes = (JSONObject) jsonResponse.get("nodes");
+            } else {
+                Log.d(DEBUG_TAG, "Server response is NULL.");
+            }
         } catch (JSONException jsonEx) {
             jsonEx.printStackTrace();
         }
@@ -44,16 +51,20 @@ public class WifiAccessPointReader {
     public List<WifiAccessPointDTO> getAllWifiNodes(Location location) {
         List<WifiAccessPointDTO> wifiNodes = new ArrayList<WifiAccessPointDTO>();
         JSONObject wifiJsonNodes = getWifiJsonNodes(location);
-        for (int i = 0; i < wifiJsonNodes.length(); i++) {
-            try {
-                JSONObject wifiJsonNode = (JSONObject) ((JSONObject) wifiJsonNodes.getJSONObject(wifiJsonNodes.names().getString(i)));
-                WifiAccessPointDTO wifiNode = jsonAndDTOConverter.serialize(wifiJsonNode);
-                if (wifiNode != null) {
-                    wifiNodes.add(wifiNode);
+        if (wifiJsonNodes != null) {
+            for (int i = 0; i < wifiJsonNodes.length(); i++) {
+                try {
+                    JSONObject wifiJsonNode = (JSONObject) ((JSONObject) wifiJsonNodes.getJSONObject(wifiJsonNodes.names().getString(i)));
+                    WifiAccessPointDTO wifiNode = jsonAndDTOConverter.serialize(wifiJsonNode);
+                    if (wifiNode != null) {
+                        wifiNodes.add(wifiNode);
+                    }
+                } catch (JSONException jsonEx) {
+                    jsonEx.printStackTrace();
                 }
-            } catch (JSONException jsonEx) {
-                jsonEx.printStackTrace();
             }
+        }else {
+            Log.d(DEBUG_TAG, "JSONObject received is NULL.");
         }
         return wifiNodes;
     }

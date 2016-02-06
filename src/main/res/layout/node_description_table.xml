@@ -13,8 +13,7 @@
     android:paddingRight="10dp"
     android:paddingTop="25dp"
     android:shrinkColumns="*"
-    android:stretchColumns="*"
-    >
+    android:stretchColumns="*">
 
     <TableRow
         android:id="@+id/tableRow1"
@@ -29,19 +28,19 @@
             android:id="@+id/node_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:background="@color/lightRed2"
-            android:text="Node Id"
-            android:textSize="16dp" />
+            android:gravity="center"
+            android:text="@string/nodeId"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/node_id_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:background="@color/lightRed2"
+            android:gravity="center"
             android:text=""
-            android:textSize="16dp" />
+            android:textSize="14dp" />
 
     </TableRow>
 
@@ -58,19 +57,19 @@
             android:id="@+id/hostname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/lightBlue2"
             android:gravity="center"
-            android:text="Host Name"
-            android:background="@color/blue6"
-            android:textSize="16dp" />
+            android:text="@string/hostName"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/hostname_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/lightBlue2"
             android:gravity="center"
             android:text=""
-            android:background="@color/blue6"
-            android:textSize="16dp" />
+            android:textSize="14dp" />
 
     </TableRow>
 
@@ -87,19 +86,19 @@
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:background="@color/lightRed2"
-            android:text="Description"
-            android:textSize="16dp" />
+            android:gravity="center"
+            android:text="@string/description"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/description_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:background="@color/lightRed2"
+            android:gravity="center"
             android:text=""
-            android:textSize="16dp" />
+            android:textSize="14dp" />
 
     </TableRow>
 
@@ -116,19 +115,19 @@
             android:id="@+id/firstSeen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/lightBlue2"
             android:gravity="center"
-            android:text="First Seen"
-            android:background="@color/blue6"
-            android:textSize="16dp" />
+            android:text="@string/firstSeen"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/firstSeen_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/lightBlue2"
             android:gravity="center"
             android:text=""
-            android:background="@color/blue6"
-            android:textSize="16dp" />
+            android:textSize="14dp" />
 
     </TableRow>
 
@@ -145,19 +144,19 @@
             android:id="@+id/lastSeen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:background="@color/lightRed2"
-            android:text="Last Seen"
-            android:textSize="16dp" />
+            android:gravity="center"
+            android:text="@string/lastSeen"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/lastSeen_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:background="@color/lightRed2"
+            android:gravity="center"
             android:text=""
-            android:textSize="16dp" />
+            android:textSize="14dp" />
 
     </TableRow>
 
@@ -174,19 +173,19 @@
             android:id="@+id/uptime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/lightBlue2"
             android:gravity="center"
-            android:text="Uptime"
-            android:background="@color/blue6"
-            android:textSize="16dp" />
+            android:text="@string/uptime"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/uptime_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/lightBlue2"
             android:gravity="center"
             android:text=""
-            android:background="@color/blue6"
-            android:textSize="16dp" />
+            android:textSize="14dp" />
 
     </TableRow>
 
@@ -203,19 +202,19 @@
             android:id="@+id/isOnline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:background="@color/lightRed2"
-            android:text="Online"
-            android:textSize="16dp" />
+            android:gravity="center"
+            android:text="@string/online"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/isOnline_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:background="@color/lightRed2"
+            android:gravity="center"
             android:text=""
-            android:textSize="16dp" />
+            android:textSize="14dp" />
 
     </TableRow>
 
@@ -232,19 +231,19 @@
             android:id="@+id/distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/lightBlue2"
             android:gravity="center"
-            android:text="Distance"
-            android:background="@color/blue6"
-            android:textSize="16dp" />
+            android:text="@string/distance"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/distance_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/lightBlue2"
             android:gravity="center"
             android:text=""
-            android:background="@color/blue6"
-            android:textSize="16dp" />
+            android:textSize="14dp" />
 
     </TableRow>
 
@@ -261,19 +260,19 @@
             android:id="@+id/altitude"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:background="@color/lightRed2"
-            android:text="Altitude"
-            android:textSize="16dp" />
+            android:gravity="center"
+            android:text="@string/altitude"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/altitude_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:background="@color/lightRed2"
+            android:gravity="center"
             android:text=""
-            android:textSize="16dp" />
+            android:textSize="14dp" />
 
     </TableRow>
 
@@ -290,19 +289,19 @@
             android:id="@+id/clients"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/lightBlue2"
             android:gravity="center"
-            android:background="@color/blue6"
-            android:text="Clients Count"
-            android:textSize="16dp" />
+            android:text="@string/clientsCount"
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/clients_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/lightBlue2"
             android:gravity="center"
-            android:background="@color/blue6"
             android:text=""
-            android:textSize="16dp" />
+            android:textSize="14dp" />
 
     </TableRow>
 

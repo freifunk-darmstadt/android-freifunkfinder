@@ -10,29 +10,49 @@ import java.util.List;
 import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
 import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
+/*
+WifiAccessPointCalculator - This class calculates the relevant Wifi nodes depending upon user's
+current location.
+Copyright (C) 2016  Author: Govind Singh
 
-/**
- * Created by govind,sooraj,puneet on 12/10/2015.
- */
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+govind.singh@stud.tu-darmstadt.de, TU Darmstadt, Germany
+*/
+
 public class WifiAccessPointCalculator {
 
     private WifiAccessPointSorter wifiSorter;
 
-    public List<WifiAccessPointDTO> calculateRelevantWifiNodes(Location location , List<WifiAccessPointDTO> allWifiNodes){
-        Log.d("GPS LOCATION", " latitude : " +location.getLatitude() + " and longitude : " +location.getLongitude());
+    private static final String DEBUG_TAG = "WifiNodeCalculator : ";
+
+    public List<WifiAccessPointDTO> calculateRelevantWifiNodes(Location location, List<WifiAccessPointDTO> allWifiNodes) {
+        Log.d(DEBUG_TAG, " latitude : " + location.getLatitude() + " and longitude : " + location.getLongitude());
         wifiSorter = new WifiAccessPointSorter(location);
         Collections.sort(allWifiNodes, wifiSorter);
         List<WifiAccessPointDTO> relevantWifiNodes = new ArrayList<WifiAccessPointDTO>();
-        for (WifiAccessPointDTO wifiNode : allWifiNodes){
-            Log.d("DISTANCE", " distance of node id : " +wifiNode.getNodeId() + " = " +wifiNode.getDistance());
-            if (wifiNode.getDistance() < GlobalParams.getSearchRange()){
+        for (WifiAccessPointDTO wifiNode : allWifiNodes) {
+            double nodeDistance = wifiNode.getDistance();
+            Log.d(DEBUG_TAG, " distance of node id : " + wifiNode.getNodeId() + " = " + nodeDistance);
+            if (nodeDistance < GlobalParams.getSearchRange()) {
                 relevantWifiNodes.add(wifiNode);
-            }else{
+            } else {
                 break;
             }
         }
         int totalRelNodes = relevantWifiNodes.size();
-        Log.d("DISTANCE", " total relevant nodes : " +totalRelNodes);
+        Log.d(DEBUG_TAG, " total relevant nodes : " + totalRelNodes);
         int endIndex = (GlobalParams.getNodesCount() < totalRelNodes) ? GlobalParams.getNodesCount() : totalRelNodes;
         return relevantWifiNodes.subList(0, endIndex);
     }

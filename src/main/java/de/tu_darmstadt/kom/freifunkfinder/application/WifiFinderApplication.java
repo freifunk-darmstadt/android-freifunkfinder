@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.tu_darmstadt.kom.freifunkfinder.common.ApplicationConstants;
@@ -13,11 +14,29 @@ import de.tu_darmstadt.kom.freifunkfinder.data_access.DatabaseManagerInt;
 import de.tu_darmstadt.kom.freifunkfinder.data_access.SqliteManager;
 import de.tu_darmstadt.kom.freifunkfinder.common.MobileLocation;
 
+/*
+WifiFinderApplication - An implementation of WifiFinderApplicationInt that performs its functionalities.
+Copyright (C) 2016  Author: Govind Singh
 
-/**
- * Created by govind,sooraj,puneet on 12/10/2015.
- */
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+govind.singh@stud.tu-darmstadt.de, TU Darmstadt, Germany
+*/
+
 public class WifiFinderApplication implements WifiFinderApplicationInt {
+
+    private static final String DEBUG_TAG = "WifiFinderApp : ";
 
     private static WifiFinderApplication wifiFinderApplication;
 
@@ -38,41 +57,40 @@ public class WifiFinderApplication implements WifiFinderApplicationInt {
         wifiReader = new WifiAccessPointReader();
     }
 
-    public static WifiFinderApplication getWifiFinderApplication(Context applicationContext){
-        if(wifiFinderApplication == null){
+    public static WifiFinderApplication getWifiFinderApplication(Context applicationContext) {
+        if (wifiFinderApplication == null) {
             wifiFinderApplication = new WifiFinderApplication(applicationContext);
         }
         return wifiFinderApplication;
     }
 
-    /* check if duration threshold to make http
-     * request has been reached
-      * */
     private boolean isDurationThresholdReached(long oldTimestamp) {
-        boolean isDurationReadched = false;
+        boolean isDurationReached = false;
         long currentTimestamp = System.currentTimeMillis();
-        System.out.println(currentTimestamp + " milliseconds using system");
+        Log.d(DEBUG_TAG, "Current timestamp = " + currentTimestamp);
         long timeDiff = currentTimestamp - oldTimestamp;
         long minutesOver = (timeDiff) / (1000 * 60);
-        System.out.println("minutes over = " + minutesOver);
-        if (minutesOver > 30){
-            isDurationReadched = true;
+        Log.d(DEBUG_TAG, "Total duration over = " + minutesOver);
+        if (minutesOver > 30) {
+            isDurationReached = true;
             SharedPreferences settings = applicationContext.getSharedPreferences(ApplicationConstants.PREFS_TIMESTAMP, 0);
             SharedPreferences.Editor editor = settings.edit();
             editor.putLong(ApplicationConstants.PREFERENC_KEY, currentTimestamp);
-            System.out.println(" setting old timestamp value = " +currentTimestamp);
+            Log.d(DEBUG_TAG, "Setting new timestamp = " + currentTimestamp);
             editor.commit();
         }
-        return isDurationReadched;
+        return isDurationReached;
     }
 
     @Override
     public List<WifiAccessPointDTO> getRelevantWifiNodes() {
-        List<WifiAccessPointDTO> relevantWifiNodes = null;
+        List<WifiAccessPointDTO> relevantWifiNodes = new ArrayList<WifiAccessPointDTO>();
         try {
             List<WifiAccessPointDTO> allWifiNodes = getAllWifiNodes();
-            relevantWifiNodes = wifiNodesCalculator.calculateRelevantWifiNodes(MobileLocation.getLocation(), allWifiNodes);
-        }catch (Exception ex){
+            if (allWifiNodes.size() > 0) {
+                relevantWifiNodes = wifiNodesCalculator.calculateRelevantWifiNodes(MobileLocation.getLocation(), allWifiNodes);
+            }
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return relevantWifiNodes;
@@ -80,18 +98,21 @@ public class WifiFinderApplication implements WifiFinderApplicationInt {
 
     @Override
     public void persistWifiNode() {
-        if(databaseManager.isDatabaseEmpty()) {
+        if (isDurationThresholdReached(GlobalParams.getOldTimeStamp())) {
             List<WifiAccessPointDTO> accessPointDTOs = wifiReader.getAllWifiNodes(MobileLocation.getLocation());
-            for (WifiAccessPointDTO wifiAccessPointDTO : accessPointDTOs) {
-                try {
-                    databaseManager.write(wifiAccessPointDTO);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+            if (accessPointDTOs != null && accessPointDTOs.size() > 0) {
+                for (WifiAccessPointDTO wifiAccessPointDTO : accessPointDTOs) {
+                    try {
+                        databaseManager.write(wifiAccessPointDTO);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
-        }else{
+        } else {
+            Log.d(DEBUG_TAG, "Setting IsWifiNodePersisted flag to True");
             GlobalParams.setIsWifiNodesPersisted(true);
-            Log.d("DATABASE", "Database is already full.");
+            Log.d(DEBUG_TAG, "The duration threshold has not reached.");
         }
     }
 

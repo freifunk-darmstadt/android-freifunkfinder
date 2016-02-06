@@ -2,16 +2,21 @@
     <string name="app_name">FreifunkFinder</string>
     <string name="about_activity">AboutActivity</string>
     <string name="help_activity">HelpActivity</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="about">About</string>
     <string name="help">Help</string>
-
     <string name="name">Name</string>
     <string name="gender">Gender</string>
     <string name="age">Age</string>
-
-    <string name="fetch">Fetch from DB</string>
+    <string name="nodeId">Node Id</string>
+    <string name="hostName">Host Name</string>
+    <string name="description">Description</string>
+    <string name="firstSeen">First Seen</string>
+    <string name="lastSeen">Last Seen</string>
+    <string name="uptime">Uptime</string>
+    <string name="online">Online</string>
+    <string name="distance">Distance</string>
+    <string name="altitude">Height</string>
+    <string name="clientsCount">Clients Count</string>
 </resources>

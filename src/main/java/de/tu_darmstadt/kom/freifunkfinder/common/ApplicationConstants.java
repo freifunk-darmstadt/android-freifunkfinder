@@ -1,11 +1,25 @@
 package de.tu_darmstadt.kom.freifunkfinder.common;
 
-/**
- * Created by govind on 12/11/2015.
- */
 /*
- a central class to define all the constants related to the app
- */
+ApplicationConstants - A common class to define all the application related constants.
+Copyright (C) 2016  Author: Puneet Arora
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+puneet.arora@stud.tu-darmstadt.de, TU Darmstadt, Germany
+*/
+
 public final class ApplicationConstants {
 
     /* app name */

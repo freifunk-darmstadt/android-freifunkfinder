@@ -1,21 +1,38 @@
 package de.tu_darmstadt.kom.freifunkfinder.common;
 
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.io.Serializable;
+/*
+WifiAccessPointDTO - The domain object used across the layers.
+Copyright (C) 2016  Author: Puneet Arora
 
-/**
- * Created by govind,sooraj,puneet on 12/10/2015.
- */
-public class WifiAccessPointDTO implements Serializable {
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    private static final long serialVersionUID = -7060210544600464481L;
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    private String hostName;
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-    private double distance;
+puneet.arora@stud.tu-darmstadt.de, TU Darmstadt, Germany
+*/
+
+public class WifiAccessPointDTO implements Parcelable {
+
+    public WifiAccessPointDTO() {
+
+    }
 
     private String nodeId;
+
+    private String hostName;
 
     private String description;
 
@@ -23,9 +40,15 @@ public class WifiAccessPointDTO implements Serializable {
 
     private String lastSeen;
 
+    private double distance;
+
     private boolean isOnline;
 
     private double uptime;
+
+    private int clients;
+
+    private double loadAverage;
 
     private Location location;
 
@@ -35,9 +58,13 @@ public class WifiAccessPointDTO implements Serializable {
 
     private float dy = 0.0f;
 
-    private int clients;
+    public String getNodeId() {
+        return nodeId;
+    }
 
-    private double loadAverage;
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
+    }
 
     public String getHostName() {
         return hostName;
@@ -45,22 +72,6 @@ public class WifiAccessPointDTO implements Serializable {
 
     public void setHostName(String hostName) {
         this.hostName = hostName;
-    }
-
-    public double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(double distance) {
-        this.distance = distance;
-    }
-
-    public String getNodeId() {
-        return nodeId;
-    }
-
-    public void setNodeId(String nodeId) {
-        this.nodeId = nodeId;
     }
 
     public String getDescription() {
@@ -87,6 +98,14 @@ public class WifiAccessPointDTO implements Serializable {
         this.lastSeen = lastSeen;
     }
 
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
     public boolean isOnline() {
         return isOnline;
     }
@@ -101,6 +120,22 @@ public class WifiAccessPointDTO implements Serializable {
 
     public void setUptime(double uptime) {
         this.uptime = uptime;
+    }
+
+    public int getClients() {
+        return clients;
+    }
+
+    public void setClients(int clients) {
+        this.clients = clients;
+    }
+
+    public double getLoadAverage() {
+        return loadAverage;
+    }
+
+    public void setLoadAverage(double loadAverage) {
+        this.loadAverage = loadAverage;
     }
 
     public Location getLocation() {
@@ -135,20 +170,49 @@ public class WifiAccessPointDTO implements Serializable {
         this.dy = dy;
     }
 
-    public int getClients() {
-        return clients;
+    protected WifiAccessPointDTO(Parcel in) {
+        hostName = in.readString();
+        distance = in.readDouble();
+        nodeId = in.readString();
+        description = in.readString();
+        firstSeen = in.readString();
+        lastSeen = in.readString();
+        isOnline = (in.readByte() != 0x00);
+        uptime = in.readDouble();
+        clients = in.readInt();
+        loadAverage = in.readDouble();
+        location = (Location) in.readValue(Location.class.getClassLoader());
     }
 
-    public void setClients(int clients) {
-        this.clients = clients;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public double getLoadAverage() {
-        return loadAverage;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(hostName);
+        dest.writeDouble(distance);
+        dest.writeString(nodeId);
+        dest.writeString(description);
+        dest.writeString(firstSeen);
+        dest.writeString(lastSeen);
+        dest.writeByte((byte) (isOnline ? 0x01 : 0x00));
+        dest.writeDouble(uptime);
+        dest.writeInt(clients);
+        dest.writeDouble(loadAverage);
+        dest.writeValue(location);
     }
 
-    public void setLoadAverage(double loadAverage) {
-        this.loadAverage = loadAverage;
-    }
+    public static final Creator<WifiAccessPointDTO> CREATOR = new Creator<WifiAccessPointDTO>() {
+        @Override
+        public WifiAccessPointDTO createFromParcel(Parcel in) {
+            return new WifiAccessPointDTO(in);
+        }
 
+        @Override
+        public WifiAccessPointDTO[] newArray(int size) {
+            return new WifiAccessPointDTO[size];
+        }
+    };
 }

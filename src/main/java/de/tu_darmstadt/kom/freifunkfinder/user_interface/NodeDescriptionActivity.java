@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 
+
 /**
  * Created by govind on 1/8/2016.
  */
@@ -19,15 +20,15 @@ public class NodeDescriptionActivity extends AppCompatActivity {
     private TableLayout tableLayout;
     private TextView textView;
     private TableRow tableRow;
-    private static final String DISTANCE_UNIT = " m (ca.)" ;
-    private static final String NOT_AVAIL = "--- Not Available ---";
+    private static final String DISTANCE_UNIT = " m (ca.)";
+    private static final String NOT_AVAIL = "-- Not Available --";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.node_description_table);
-        Intent intent = getIntent();
-        WifiAccessPointDTO selectedNode = (WifiAccessPointDTO) intent.getSerializableExtra("selected_node");
+        Bundle b = getIntent().getExtras();
+        WifiAccessPointDTO selectedNode = b.getParcelable("selected_node");
         tableLayout = (TableLayout) findViewById(R.id.tableLayout1);
         for (int i = 0; i < tableLayout.getChildCount(); i++) {
             tableRow = (TableRow) tableLayout.getChildAt(i);
@@ -56,7 +57,7 @@ public class NodeDescriptionActivity extends AppCompatActivity {
                     textView.setText(String.valueOf(selectedNode.isOnline()));
                     break;
                 case 7:
-                    textView.setText(String.valueOf((int)selectedNode.getDistance()) + DISTANCE_UNIT);
+                    textView.setText(String.valueOf((int) selectedNode.getDistance()) + DISTANCE_UNIT);
                     break;
                 case 8:
                     textView.setText(calAltitude(selectedNode.getLocation().getAltitude()));
@@ -70,7 +71,7 @@ public class NodeDescriptionActivity extends AppCompatActivity {
         }
     }
 
-    private String calUptime(double uptimeSecs){
+    private String calUptime(double uptimeSecs) {
         String res = NOT_AVAIL;
         if (uptimeSecs > 0.0) {
             int days = (int) TimeUnit.SECONDS.toDays((long) uptimeSecs);
@@ -84,11 +85,12 @@ public class NodeDescriptionActivity extends AppCompatActivity {
         return res;
     }
 
-    private String calAltitude(double altitude){
+    private String calAltitude(double altitude) {
         String res = NOT_AVAIL;
-        if(altitude > 0.0){
+        if (altitude > 0.0) {
             res = String.valueOf((int) altitude) + DISTANCE_UNIT;
         }
         return res;
     }
+
 }
