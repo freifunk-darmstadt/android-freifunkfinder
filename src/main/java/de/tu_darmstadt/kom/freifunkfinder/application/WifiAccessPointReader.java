@@ -1,3 +1,23 @@
+/* WifiAccessPointReader - This class reads data from the Freifunk server.
+ * Copyright (C) 2016  Govind Singh
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * govind.singh@stud.tu-darmstadt.de, Technical University Darmstadt
+ *
+ */
+
 package de.tu_darmstadt.kom.freifunkfinder.application;
 
 import android.location.Location;
@@ -11,14 +31,10 @@ import java.util.List;
 
 import de.tu_darmstadt.kom.freifunkfinder.application.server.HttpServerImpl;
 import de.tu_darmstadt.kom.freifunkfinder.application.server.ServerInterface;
-import de.tu_darmstadt.kom.freifunkfinder.common.ApplicationConstants;
+import de.tu_darmstadt.kom.freifunkfinder.common.FreifunkFinderAppConstants;
 import de.tu_darmstadt.kom.freifunkfinder.common.WifiAccessPointDTO;
 import de.tu_darmstadt.kom.freifunkfinder.common.converter.JSONAndDTOConverter;
 
-
-/**
- * Created by govind,sooraj,puneet on 12/10/2015.
- */
 public class WifiAccessPointReader {
 
     private static final String DEBUG_TAG = "WifiNodeReader : ";
@@ -32,9 +48,15 @@ public class WifiAccessPointReader {
         jsonAndDTOConverter = JSONAndDTOConverter.getJsonAndDTOConverter();
     }
 
+    /**
+     * Gets the Json response from Freifunk server.
+     *
+     * @param location the current location of the user.
+     * @return a Json Object having the response received from Freifunk server.
+     */
     private JSONObject getWifiJsonNodes(Location location) {
         JSONObject jsonNodes = null;
-        String response = httpServer.getRequest(ApplicationConstants.FREIFUNK_URL);
+        String response = httpServer.getRequest(FreifunkFinderAppConstants.FREIFUNK_URL);
         try {
             if (response != null) {
                 JSONObject jsonResponse = new JSONObject(response);
@@ -48,6 +70,12 @@ public class WifiAccessPointReader {
         return jsonNodes;
     }
 
+    /**
+     * Gets a list of all available Wi-Fi nodes from Freifunk server.
+     *
+     * @param location the current location of the user.
+     * @return a list of all available Wi-Fi nodes.
+     */
     public List<WifiAccessPointDTO> getAllWifiNodes(Location location) {
         List<WifiAccessPointDTO> wifiNodes = new ArrayList<WifiAccessPointDTO>();
         JSONObject wifiJsonNodes = getWifiJsonNodes(location);
@@ -63,7 +91,7 @@ public class WifiAccessPointReader {
                     jsonEx.printStackTrace();
                 }
             }
-        }else {
+        } else {
             Log.d(DEBUG_TAG, "JSONObject received is NULL.");
         }
         return wifiNodes;

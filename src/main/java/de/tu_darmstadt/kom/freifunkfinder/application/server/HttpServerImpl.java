@@ -1,3 +1,23 @@
+/* HttpServerImpl - An implementation of ServerInterface to read data from Freifunk server.
+ * Copyright (C) 2016  Govind Singh
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * govind.singh@stud.tu-darmstadt.de, Technical University Darmstadt
+ *
+ */
+
 package de.tu_darmstadt.kom.freifunkfinder.application.server;
 
 import android.util.Log;
@@ -7,30 +27,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-/*
-HttpServerImpl - An implementation of ServerInterface to read data from Freifunk server.
-Copyright (C) 2016  Author: Govind Singh
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-govind.singh@stud.tu-darmstadt.de, TU Darmstadt, Germany
-*/
-
 public class HttpServerImpl implements ServerInterface<String> {
 
     private static final String DEBUG_TAG = "HttpServerImpl : ";
 
+    /**
+     * HTTP GET request to the Freifunk server.
+     *
+     * @param url the Freifunk service URL.
+     * @return response of type String.
+     */
     @Override
     public String getRequest(String url) {
         BufferedReader bufferedReader = null;

@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 import de.tu_darmstadt.kom.freifunkfinder.application.WifiFinderApplication;
 import de.tu_darmstadt.kom.freifunkfinder.application.WifiFinderApplicationInt;
-import de.tu_darmstadt.kom.freifunkfinder.common.ApplicationConstants;
+import de.tu_darmstadt.kom.freifunkfinder.common.FreifunkFinderAppConstants;
 import de.tu_darmstadt.kom.freifunkfinder.common.GlobalParams;
 
 public class MainActivity extends AppCompatActivity
@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         // shared pref operation
-        SharedPreferences sharedPreferences = getSharedPreferences(ApplicationConstants.PREFS_TIMESTAMP, 0);
-        long oldTimestamp = sharedPreferences.getLong(ApplicationConstants.PREFERENC_KEY, 0L);
+        SharedPreferences sharedPreferences = getSharedPreferences(FreifunkFinderAppConstants.PREFS_TIMESTAMP, 0);
+        long oldTimestamp = sharedPreferences.getLong(FreifunkFinderAppConstants.PREFERENC_KEY, 0L);
         Log.d(DEBUG_TAG, "Old timestamp received = " + oldTimestamp);
         GlobalParams.setOldTimeStamp(oldTimestamp);
 
