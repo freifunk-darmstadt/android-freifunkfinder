@@ -1,0 +1,9 @@
+References for images and icons used :
+
+Background image :	Designed by Freepik.com
+			http://www.freepik.com
+Wi-Fi node icon  :	https://openclipart.org/detail/16369/glassy-wifi-symbol
+Compass icon 	 : 	http://www.leesicons.com/north-compass-icons.html
+Cross icon   	 : 	https://openclipart.org/detail/10941/red-+-green-ok-not-ok-icons
+Tick icon    	 : 	http://www.clipartbest.com/clipart-xcgK5qdai
+Logo 	     	 : 	https://www.iconfinder.com/search/?q=wifi
